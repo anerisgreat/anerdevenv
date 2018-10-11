@@ -1,6 +1,6 @@
 set tabstop=4
 set number relativenumber
-call matchadd('ColorColumn', '\%81v', 100)
+set columns=80
 
 set hlsearch
 
