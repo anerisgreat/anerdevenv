@@ -48,5 +48,3 @@ nmap <CR> o<Esc>
 exec "set listchars=tab:>-,trail:\uB7,nbsp:~"
 nmap <CR> o<Esc>
 nnoremap <F3> :set list!<CR>
-
-
