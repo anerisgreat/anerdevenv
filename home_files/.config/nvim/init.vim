@@ -55,3 +55,5 @@ autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in
 map <C-n> :NERDTreeToggle<CR>
 
 let NERDTreeShowHidden=1
+
+set timeoutlen=1000 ttimeoutlen=0
