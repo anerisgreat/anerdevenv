@@ -11,6 +11,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'scrooloose/nerdtree'
+Plugin 'rafi/awesome-vim-colorschemes'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
