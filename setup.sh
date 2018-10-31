@@ -12,5 +12,8 @@ mkdir $HOME/.config/i3
 rm $HOME/.config/i3/config
 ln -sf $PWD/conf_files/i3-config $HOME/.config/i3/config
 
+mkdir $HOME/.config/i3status
+ln -s $PWD/conf_files/i3status-config $HOME/.config/i3status/config
+
 vim +PluginInstall +qall
 export TERM=xterm-256color
