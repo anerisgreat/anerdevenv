@@ -51,6 +51,7 @@ nmap <CR> o<Esc>
 "Visible whitespace
 exec "set listchars=tab:>-,trail:\uB7,nbsp:~"
 nnoremap <F3> :set list!<CR>
+:set list!
 
 "Mapping NERDTree 'Ctrl+N' for showing menu. Copypasted.
 autocmd StdinReadPre * let s:std_in=1
