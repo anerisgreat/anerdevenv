@@ -193,3 +193,5 @@ bar {
 }
 
 new_window 1pixel
+#Disable mouse focus
+focus_follows_mouse no
