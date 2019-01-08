@@ -11,6 +11,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'scrooloose/nerdtree'
+Plugin 'kien/ctrlp.vim'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -70,3 +71,8 @@ set clipboard+=unnamedplus
 set tabstop=4
 set shiftwidth=4
 set expandtab
+
+"Setting automatic folding
+set foldmethod=indent
+set foldlevel=1
+hi Folded ctermbg=187
