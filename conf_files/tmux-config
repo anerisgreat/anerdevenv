@@ -1,3 +1,5 @@
+set -g default-terminal "xterm"
+
 unbind C-b
 set-option -g prefix C-a
 bind-key C-a send-prefix
@@ -12,7 +14,7 @@ unbind %
 
 set -ag terminal-overrides ',*:cud1=\E[1B'
 
-bind r source-file ~/.tmux.conf
+bind r source-file ~/.tmux.conf \; display "Reloaded!"
 
 # switch panes using Alt-arrow without prefix
 bind -n M-Left select-pane -L
@@ -114,3 +116,7 @@ set -g pane-border-bg $c_inactive_bg
 
 set -g window-style "fg=$c_inactive_fg,bg=$c_inactive_bg"
 set -g window-active-style "fg=$c_active_fg,bg=$c_active_bg"
+
+bind -n M-Tab next-window
+bind -n M-S-Tab previous-window
+
