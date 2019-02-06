@@ -1,0 +1,63 @@
+windows=$(tmux list-windows -a | cut -d ':' -f 2)
+windows+=" "
+longest=0
+for word in $windows
+do
+    len=${#word}
+    if (( len > longest))
+    then
+        longest=$len
+    fi
+done
+
+lastChar='U'
+
+nextWindow=""
+for (( i=0 ; i<$longest ; i++ ))
+do
+    read -rsn1 lastChar
+    nextWindow="$nextWindow$lastChar"
+
+    if [ $lastChar = "x" ]
+    then
+        echo BREAK
+        nextWindow=$lastChar
+        break
+    fi
+    echo $nextWindow
+done
+
+nextWindow=$(echo $nextWindow | sed 's/^0*//')
+
+foundWindow=$(echo $windows | grep -o $nextWindow)
+while [ "$foundWindow" != "$nextWindow" ] && [ "$nextWindow" != "x" ]
+do
+    nextWindow=""
+    for (( i=0 ; i<$longest ; i++ ))
+    do
+        read -rsn1 lastChar
+        nextWindow="$nextWindow$lastChar"
+
+        if [ $lastChar = "x" ]
+        then
+            echo BREAK
+            nextWindow=$lastChar
+            break
+        fi
+        echo $nextWindow
+    done
+
+    nextWindow=$(echo $nextWindow | sed 's/^0*//')
+    echo $nextWindow
+    echo $nextWindow
+    echo $nextWindow
+    echo $nextWindow
+
+    foundWindow=$(echo $windows | grep -o $nextWindow)
+    echo $foundWindow
+    echo $foundWindow
+    echo $foundWindow
+    echo $foundWindow
+done
+
+echo $nextWindow
