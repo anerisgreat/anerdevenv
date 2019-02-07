@@ -1,4 +1,5 @@
-windows=$(tmux list-windows -a | cut -d ':' -f 2)
+session=$(tmux display-message -p "#S")
+windows=$(tmux list-windows -t 0 -a | grep "^$session:" | cut -d ':' -f 2)
 windows+=" "
 longest=0
 for word in $windows
@@ -14,8 +15,8 @@ lastChar=U
 foundWindow=A
 nextWindow=B
 
-preMsg="Window number ('x' to cancel)"
-while [ "$foundWindow" != "$nextWindow" ] && [ "$nextWindow" != "x" ]
+preMsg="Window number ('n' to cancel)"
+while [ "$foundWindow" != "$nextWindow" ] && [ "$nextWindow" != "n" ]
 do
     nextWindow=""
     #We want to capture X characters, corresponding to string length of
@@ -34,7 +35,7 @@ do
             then
                 #If hit enter before entering character, run again
                 nextWindow=REDO
-                preMsg="Invalid ('x' to cancel)"
+                preMsg="Invalid ('n' to cancel)"
                 break
             else
                 #If hit enter after a character has been entered, good enough
@@ -42,8 +43,8 @@ do
             fi
         fi
 
-        #If canceled with x
-        if [ $lastChar = "x" ]
+        #If canceled with n
+        if [ $lastChar = "n" ]
         then
             nextWindow=$lastChar
             break
@@ -52,7 +53,7 @@ do
         #Checking if it is number, if not redo
         re='^[0-9]+$'
         if ! [[ $nextWindow =~ $re ]] ; then
-            preMsg="Invalid ('x' to cancel)"
+            preMsg="Invalid ('n' to cancel)"
             nextWindow=REDO
             break
         fi
@@ -65,20 +66,13 @@ do
             trimmedWindows+=" "
         done
 
-        tmp=$(echo $trimmedWindows | grep -wo $nextWindow)
+        tmp=$(echo $trimmeds | grep -wo $nextWindow)
         if [ "$tmp" = "$nextWindow" ] || [ -z "$tmp" ] 
         then
             break
         fi
     done
 
-    #Trim leading zeros
-    nextWindow=$(echo $nextWindow | sed 's/^0*//')
-    #If all was 0s, number must have been 0
-    if [ -z "$nextWindow" ]
-    then
-        nextWindow=0
-    fi
     #Find window matching whole word
     foundWindow=$(echo $windows | grep -wo $nextWindow)
 done

@@ -84,7 +84,7 @@ set -g status-bg $c_status_bg
 set -g status-fg $c_status_highlight_bg
 set -g status-attr dim
 set -g status-left " #[fg=$c_status_highlight_fg]#(who | cut -d \" \" -f1)#[fg=$c_status_fg]@#[bold]#h#[default] #[fg=$c_status_fg]| "
-set -g status-right "#[fg=$c_status_bright_fg,bg=$c_status_highlight_fg]#{tmux_msg}#[fg=$c_status_highlight_fg,bg=$c_status_mid_bg] %d/%m #[fg=$c_status_bright_fg,bg=$c_status_bright_bg] %H:%M:%S "
+set -g status-right "#[fg=$c_status_bright_fg,bg=$c_status_highlight_fg]#{tmux_msg}#[fg=$c_status_highlight_fg,bg=$c_status_mid_bg] %d/%m #[fg=$c_status_bright_fg,bg=$c_status_bright_bg] %H:%M "
 
 set -g status-left-length 25
 set -g status-right-length 50
@@ -123,5 +123,3 @@ if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.1" | bc)" = 1 ]' \
 
 bind -n M-Tab next-window
 bind -n M-S-Tab previous-window
-bind ` display-panes
-set status-interval 1
