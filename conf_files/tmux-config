@@ -122,7 +122,12 @@ set -g pane-border-bg $c_inactive_bg
 if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.1" | bc)" = 1 ]' \
     "set -g window-style \"fg=$c_inactive_fg,bg=$c_inactive_bg\""
 if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.1" | bc)" = 1 ]' \
-    "set -g window-active-style \"fg=$c_active_fg,bg=$c_active_bg\""
+    "set -g window-active-style \"fg=$c_active_fg,bg=$c_active_bg\p""
+
+bind P paste-buffer
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi y send-keys -X copy-selection
+bind-key -T copy-mode-vi r send-keys -X rectangle-toggle
 
 bind -n M-Tab next-window
 bind -n M-S-Tab previous-window
