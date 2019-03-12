@@ -14,6 +14,9 @@ bind - split-window -v -c "#{pane_current_path}"
 unbi '"'
 unbind %
 
+# new panes on current path
+bind c new-window -c "#{pane_current_path}"
+
 set -ag terminal-overrides ',*:cud1=\E[1B'
 
 bind r source-file ~/.tmux.conf \; display "Reloaded!"
