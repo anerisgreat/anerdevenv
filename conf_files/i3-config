@@ -188,13 +188,13 @@ bindsym $mod+Shift+e exec i3-msg exit
 bar {
      colors {
         background #eeeeee
-        focused_background  #ffff87
-        statusline #00A5FF #that neon blue
-        separator #ffffd7
+        focused_background  #87ffaf
+        statusline #080808
+        separator #080808
 
-        focused_workspace  #4c7899 #285577 #ffffff
-        active_workspace   #333333 #5f676a #ffffff
-        inactive_workspace #333333 #222222 #888888
+        focused_workspace  #ffff87 #ffff87 #080808
+        active_workspace   #ffff87 #ffff87 #080808
+        inactive_workspace #d0d0d0 #d0d0d0 #080808
         urgent_workspace   #2f343a #900000 #ffffff
     }
     status_command i3status
