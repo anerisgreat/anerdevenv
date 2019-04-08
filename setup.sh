@@ -1,4 +1,4 @@
-sudo apt-get install -y neovim tmux
+#sudo apt-get install -y neovim tmux
 
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
@@ -17,3 +17,7 @@ ln -s $PWD/conf_files/i3status-config $HOME/.config/i3status/config
 
 vim +PluginInstall +qall
 export TERM=xterm-256color
+
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+
