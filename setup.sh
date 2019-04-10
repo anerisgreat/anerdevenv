@@ -18,9 +18,20 @@ ln -s $PWD/conf_files/i3status-config $HOME/.config/i3status/config
 vim +PluginInstall +qall
 export TERM=xterm-256color
 
+#Custom script installation
+ls -la /usr/local/bin/ | grep "anerdevenv/scripts" |\
+    awk -F '->' '{print $1}' |\
+    awk -F ' ' '{print $NF}' |\
+    while read line ; do sudo rm /usr/local/bin/$line ; done
+
+chmod -R a+x scripts
+sudo ln -s $PWD/scripts/* /usr/local/bin/
+
+#fzf
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install -all
 
+#Installation of reveal js for pandoc
 #UNTIL THEY FIX IT
 #wget https://github.com/hakimel/reveal.js/archive/master.tar.gz
 wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz
@@ -32,10 +43,3 @@ sudo rm -r /usr/local/lib/.reveal.js
 #sudo mv master /usr/local/lib/.reveal.js
 sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js
 
-ls -la /usr/local/bin/ | grep "anerdevenv/scripts" |\
-    awk -F '->' '{print $1}' |\
-    awk -F ' ' '{print $NF}' |\
-    while read line ; do sudo rm /usr/local/bin/$line ; done
-
-chmod -R a+x scripts
-sudo ln -s $PWD/scripts/* /usr/local/bin/

@@ -1,4 +1,4 @@
 #!/bin/bash
 filename=$(basename -- "$1")
 filename="${filename%.*}"
-pandoc -t revealjs -s -o $filename.html $filename.md -V revealjs-url=/usr/local/lib/.reveal.js --self-contained "${@:2}"
+pandoc -t revealjs -s -o $filename.html $1 -V revealjs-url=/usr/local/lib/.reveal.js --self-contained "${@:2}"
