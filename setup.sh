@@ -29,7 +29,7 @@ sudo ln -s $PWD/scripts/* /usr/local/bin/
 
 #fzf
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install -all
+~/.fzf/install --all
 
 #Installation of reveal js for pandoc
 #UNTIL THEY FIX IT
