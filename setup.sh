@@ -1,4 +1,9 @@
+#!/bin/bash
+[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
+
 #sudo apt-get install -y neovim tmux
+#sudo apt-get install -y inotify-tools
+
 
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 

@@ -1,0 +1,16 @@
+#!/bin/bash
+fname=$(basename -- "$1")
+fname="${fname%.*}"
+
+prevsum = ""
+evince $fname.pdf &
+inotifywait -e close_write,moved_to,create -m $(dirname $(realpath $1)) |
+while read -r directory events filename; do
+  if [ "$filename" = "$(basename $1)" ]; then
+      newsum=$(md5sum $1)
+    if [ "$newsum" != "$prevsum" ]; then
+        pandoc -s -o $fname.pdf $1 "${@:2}"
+        prevsum=$newsum
+    fi
+  fi
+done
