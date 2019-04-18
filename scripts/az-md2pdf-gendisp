@@ -2,7 +2,8 @@
 fname=$(basename -- "$1")
 fname="${fname%.*}"
 
-prevsum = ""
+pandoc -s -o $fname.pdf $1 "${@:2}" &&
+prevsum=$(md5sum $1) &&
 evince $fname.pdf &
 inotifywait -e close_write,moved_to,create -m $(dirname $(realpath $1)) |
 while read -r directory events filename; do
