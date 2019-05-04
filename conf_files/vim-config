@@ -77,3 +77,6 @@ set foldmethod=indent
 set foldlevel=1
 hi Folded ctermbg=187
 set rtp+=~/.fzf
+
+set background=light
+
