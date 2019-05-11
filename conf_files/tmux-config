@@ -67,8 +67,7 @@ c_bg_6=colour230
 
 #  modes
 setw -g clock-mode-colour $c_fg_3
-setw -g mode-fg $c_bg_1
-setw -g mode-bg $c_fg_1
+setw -g mode-style fg=$c_bg_1,bg=$c_fg_1
 
 # statusbar
 c_status_fg=$c_fg_2
@@ -85,7 +84,7 @@ set -g status-position top
 set -g status-justify left
 set -g status-bg $c_status_bg
 set -g status-fg $c_status_highlight_bg
-set -g status-attr dim
+#setw -g window-status-attr dim
 set -g status-left " #[fg=$c_status_highlight_fg]#(who | cut -d \" \" -f1)#[fg=$c_status_fg]@#[bold]#h#[default] #[fg=$c_status_fg]| "
 set -g status-right "#[fg=$c_status_bright_fg,bg=$c_status_highlight_fg]#{tmux_msg}#[fg=$c_status_highlight_fg,bg=$c_status_mid_bg] %d/%m #[fg=$c_status_bright_fg,bg=$c_status_bright_bg] %H:%M "
 
@@ -93,31 +92,27 @@ set -g status-left-length 25
 set -g status-right-length 50
 
 #statusbar - tabs
-setw -g window-status-bg $c_status_bg
-setw -g window-status-format " #[bold,fg=$c_status_highlight_fg]#I:#[default,fg=$c_status_fg]#W#F "
+setw -g window-status-style bg=$c_status_bg
+setw -g window-status-format " #[bg=$c_status_bg,bold,fg=$c_status_highlight_fg]#I:#[default,fg=$c_status_fg]#W#F "
 
-setw -g window-status-current-bg $c_status_bright_bg
-setw -g window-status-current-format " #[bold,fg=$c_status_highlight_fg]#I#[default]#[fg=$c_status_mute_fg]:#[fg=$c_status_bright_fg]#W#[fg=$c_status_mute_fg]#F "
+setw -g window-status-current-format " #[bg=$c_status_bright_bg,bold,fg=$c_status_highlight_fg]#I#[default]#[bg=$c_status_bright_bg,fg=$c_status_mute_fg]:#[fg=$c_status_bright_fg]#W#[fg=$c_status_mute_fg]#F "
 
 # messages
 #set -g message-attr bold
-set -g message-attr none
-set -g message-bg $c_status_highlight_fg
-set -g message-fg $c_status_bright_fg
-
+#set -g message-attr none
+set -g message-style bg=$c_status_highlight_fg,fg=$c_status_bright_fg
 #panes
 #set inactive/active window styles
 c_inactive_fg=$c_fg_5
 c_active_fg=$c_inactive_fg
 c_active_border=$c_fg_6
+c_inactive_border=$c_fg_4
 
 c_inactive_bg=$c_bg_5
 c_active_bg=$c_bg_6
 
-set -g pane-active-border-fg $c_active_border
-set -g pane-active-border-bg $c_active_border
-
-set -g pane-border-bg $c_inactive_bg
+set -g pane-active-border-style fg=$c_active_border,bg=$c_active_border
+set -g pane-border-style fg=$c_inactive_border,bg=$c_inactive_border
 
 #if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.1" | bc)" = 1 ]' \\
 set -g window-style "fg=$c_inactive_fg,bg=$c_inactive_bg"
