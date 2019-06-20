@@ -21,7 +21,7 @@ set number relativenumber
 set laststatus=2
 set noshowmode
 
-"__VUNDLE_COPYPASTE_END_________________________________________________________
+"__VUNDLE_COPYPASTE_END________________________________________________________
 
 "Ctrl+C Highlights all text in line beyond column #80
 :nnoremap <C-c> :call<SID>LongLineHLToggle()<cr>
