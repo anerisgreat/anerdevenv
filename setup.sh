@@ -11,6 +11,23 @@ check_if_exists_or_abort () {
     echo "$1 found"
 }
 
+check_symlink() {
+    tmp=$(find "$1" -maxdepth 1 -type l)
+    target=$(readlink -f $tmp)
+    [ $target == $2 ] && return 0 || return 1
+    return 1
+}
+
+
+check_symlink_make_if_not() {
+    check_symlink $1 $2 && return 0
+    find "$1" -maxdepth 1 -type l && unlink $1 && ln -s $2 $1 && return 0
+    find "$1" -maxdepth 1 -type f && rm $1 && ln -s $2 $1 && return 0
+    find "$1" -maxdepth 1 -type d && rm -r $1 && ln -s $2 $1 && return 0
+    ln -s $2 $1 && return 0
+    return 1
+}
+
 [ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." \
     && exit 1
 
@@ -85,8 +102,19 @@ command -v curl || { \
 
 #TMUX
 check_if_exists tmux || sudo snap install tmux --classic
+
+#CMAKE
 check_if_exists cmake || sudo snap install cmake --classic
-#sudo apt-get install -y neovim tmux
+
+#NEOVIM
+{   check_if_exists nvim || \
+    { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && chmod u+x nvim.appimage && ./nvim.appimage ; } \
+|| { echo 'Installation of NVIM failed' ; exit 1; } } && { \
+    #Post NVIM installation
+    nvim_location=$(command -v nvim)
+    check_symlink_make_if_not '/usr/bin/vim' $nvim_location
+}
+
 #sudo apt-get install -y inotify-tools
 
 
@@ -109,6 +137,7 @@ vim +PluginInstall +qall
 export TERM=xterm-256color
 
 #Custom script installation
+
 ls -la /usr/local/bin/ | grep "anerdevenv/scripts" |\
     awk -F '->' '{print $1}' |\
     awk -F ' ' '{print $NF}' |\
