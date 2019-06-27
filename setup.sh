@@ -108,9 +108,10 @@ check_if_exists cmake || sudo snap install cmake --classic
 
 #NEOVIM
 {   check_if_exists nvim || \
-    { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && chmod u+x nvim.appimage && ./nvim.appimage ; } \
+    { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && chmod u+x nvim.appimage && ./nvim.appimage --version ; } \
 || { echo 'Installation of NVIM failed' ; exit 1; } } && { \
     #Post NVIM installation
+    sudo mv nvim.appimage /usr/bin/nvim
     nvim_location=$(command -v nvim)
     check_symlink_make_if_not '/usr/bin/vim' $nvim_location
 }
