@@ -21,9 +21,13 @@ check_symlink() {
 
 check_symlink_make_if_not() {
     check_symlink $1 $2 && return 0
+    echo "NO SYMLINK"
     find "$1" -maxdepth 1 -type l && unlink $1 && ln -s $2 $1 && return 0
+    echo "NO WHATEVER"
     find "$1" -maxdepth 1 -type f && rm $1 && ln -s $2 $1 && return 0
+    echo "NO HOOYAH"
     find "$1" -maxdepth 1 -type d && rm -r $1 && ln -s $2 $1 && return 0
+    echo "FEKKER FEKKER"
     ln -s $2 $1 && return 0
     return 1
 }
@@ -108,12 +112,12 @@ check_if_exists cmake || sudo snap install cmake --classic
 
 #NEOVIM
 {   check_if_exists nvim || \
-    { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && chmod u+x nvim.appimage && ./nvim.appimage --version ; } \
+    { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && chmod u+x nvim.appimage && sudo mv ./nvim.appimage /usr/bin/nvim  ; } \
 || { echo 'Installation of NVIM failed' ; exit 1; } } && { \
     #Post NVIM installation
-    sudo mv nvim.appimage /usr/bin/nvim
+    echo "POST VIM"
     nvim_location=$(command -v nvim) && \
-    check_symlink_make_if_not '/usr/bin/vim' $nvim_location
+    sudo check_symlink_make_if_not '/usr/bin/vim' $nvim_location
 }
 
 #sudo apt-get install -y inotify-tools
