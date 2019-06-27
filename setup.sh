@@ -57,7 +57,20 @@ check_if_exists automake || {
     sudo make install && \
     cd .. && \
     rm -rf $tmp automake-1.16.tar.gz
-} || { echo 'Installation of automakej failed' ; exit 1 ; }
+} || { echo 'Installation of automake failed' ; exit 1 ; }
+
+#libtool
+check_if_exists libtoolize || {
+    wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz && \
+    tar -xzf libtool-2.4.6.tar.gz && \
+    tmp=$(tar -tzf automake-1.16.tar.gz | head -1 | cut -f1 -d"/") && \
+    cd $tmp && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf $tmp libtool-2.4.6.tar.gz
+} || { echo 'Installation of libtoolize failed' ; exit 1 ; }
 
 command -v curl || { \
     git clone https://github.com/curl/curl.git && \
