@@ -18,14 +18,14 @@ check_if_exists_or_abort snap
 #TMUX
 command -v tmux || sudo snap install tmux --classic
 
-command -v curl || \
-git clone https://github.com/curl/curl.git && \
-cd curl && \
-#env PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --with-ssl
-make && \
-sudo make install && \
-cd .. && \
-rm -rf curl || { echo 'Installation of CURL failed' ; exit 1; }
+command -v curl || { \
+    git clone https://github.com/curl/curl.git && \
+    cd curl && \
+    #env PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --with-ssl
+    make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf curl || { echo 'Installation of CURL failed' ; exit 1; } }
 
 
 #sudo apt-get install -y neovim tmux
