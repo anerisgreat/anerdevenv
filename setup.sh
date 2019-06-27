@@ -19,9 +19,22 @@ check_if_exists_or_abort g++
 check_if_exists_or_abort make
 check_if_exists_or_abort snap
 
+#autoconf
+check_if_exists autoconf || {
+    wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz && \
+    tar -xzf autoconf-latest.tar.gz && \
+    cd autoconf-latest && \
+    ./configure && \
+    make && \
+    make test && \
+    sudo make install && \
+    cd .. && \
+    rm -rf autoconf-latest autoconf-latest.tar.gz
+} || { echo 'Installation of autoconf failed' ; exit 1 ; }
 
 #TMUX
 check_if_exists tmux || sudo snap install tmux --classic
+check_if_exists cmake || sudo snap install cmake --classic
 
 command -v curl || { \
     git clone https://github.com/curl/curl.git && \
