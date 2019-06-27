@@ -1,6 +1,25 @@
 #!/bin/bash
 [ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
 
+[ ! command -v git ] && echo "Must install git before proceeding! Aborting." && exit 1
+[ ! command -v snap ] && echo "Must install snap before proceeding! Aborting." && exit 1
+[ ! command -v gcc ] && echo "Must install gcc before proceeding! Aborting." && exit 1
+[ ! command -v g++ ] && echo "Must install g++ before proceeding! Aborting." && exit 1
+[ ! command -v make ] && echo "Must install make before proceeding! Aborting." && exit 1
+
+
+#TMUX
+sudo snap install tmux --classic
+
+git clone https://github.com/curl/curl.git && \
+cd curl && \
+#env PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --with-ssl
+make && \
+sudo make install && \
+cd .. && \
+rm -rf curl|| { echo 'Installation of CURL failed' ; exit 1; }
+
+
 #sudo apt-get install -y neovim tmux
 #sudo apt-get install -y inotify-tools
 
@@ -33,18 +52,18 @@ chmod -R a+x scripts
 sudo ln -s $PWD/scripts/* /usr/local/bin/
 
 #fzf
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&
 ~/.fzf/install --all
 
 #Installation of reveal js for pandoc
 #UNTIL THEY FIX IT
 #wget https://github.com/hakimel/reveal.js/archive/master.tar.gz
-wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz
 #tar -xzvf master.tar.gz
-tar -xzvf 3.7.0.tar.gz
 #rm master.tar.gz
+#sudo mv master /usr/local/lib/.reveal.js
+wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz
+tar -xzvf 3.7.0.tar.gz
 rm 3.7.0.tar.gz
 sudo rm -r /usr/local/lib/.reveal.js
-#sudo mv master /usr/local/lib/.reveal.js
 sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js
 
