@@ -28,7 +28,6 @@ check_if_exists m4 || {
     cd $tmp && \
     ./configure && \
     make && \
-    make test && \
     sudo make install && \
     cd .. && \
     rm -rf $tmp m4-latest.tar.gz
@@ -42,10 +41,22 @@ check_if_exists autoconf || {
     cd $tmp && \
     ./configure && \
     make && \
-    make test && \
     sudo make install && \
     cd .. && \
     rm -rf $tmp autoconf-latest.tar.gz
+} || { echo 'Installation of autoconf failed' ; exit 1 ; }
+
+#automake
+check_if_exists automake || {
+    wget http://ftp.gnu.org/gnu/automake/automake-1.16.tar.xz && \
+    tar -xzf automake-1.16.tar.gz && \
+    tmp=$(tar -tzf automake-1.16.tar.gz | head -1 | cut -f1 -d"/") && \
+    cd $tmp && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf $tmp automake-1.16.tar.gz
 } || { echo 'Installation of autoconf failed' ; exit 1 ; }
 
 #TMUX
