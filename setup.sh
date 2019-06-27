@@ -1,11 +1,18 @@
 #!/bin/bash
 [ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
 
-{ ! command -v git ; } && echo "Must install git before proceeding! Aborting." && exit 1 || echo "git found"
-{ ! command -v snap ; } && echo "Must install snap before proceeding! Aborting." && exit 1 || echo "snap found"
-{ ! command -v gcc ; } && echo "Must install gcc before proceeding! Aborting." && exit 1 || echo "gcc found"
-{ ! command -v g++ ; } && echo "Must install g++ before proceeding! Aborting." && exit 1 || echo "g++ found"
-{ ! command -v make ; } && echo "Must install make before proceeding! Aborting." && exit 1 || echo "make found"
+check_if_exists_or_abort () {
+    { ! command -v $1; } && \
+    echo "Must install $1 before proceeding! Aborting." && \
+    exit 1 || \
+    echo "$1 found"
+}
+
+check_if_exists_or_abort git
+check_if_exists_or_abort gcc
+check_if_exists_or_abort g++
+check_if_exists_or_abort make
+check_if_exists_or_abort snap
 
 
 #TMUX
