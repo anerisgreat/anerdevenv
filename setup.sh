@@ -57,22 +57,22 @@ check_if_exists automake || {
     sudo make install && \
     cd .. && \
     rm -rf $tmp automake-1.16.tar.gz
-} || { echo 'Installation of automake failed' ; exit 1 ; }
-
-#TMUX
-check_if_exists tmux || sudo snap install tmux --classic
-check_if_exists cmake || sudo snap install cmake --classic
+} || { echo 'Installation of automakej failed' ; exit 1 ; }
 
 command -v curl || { \
     git clone https://github.com/curl/curl.git && \
     cd curl && \
     #env PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --with-ssl
+    ./buildconf && \
+    ./configure && \
     make && \
     sudo make install && \
     cd .. && \
     rm -rf curl || { echo 'Installation of CURL failed' ; exit 1; } }
 
-
+#TMUX
+check_if_exists tmux || sudo snap install tmux --classic
+check_if_exists cmake || sudo snap install cmake --classic
 #sudo apt-get install -y neovim tmux
 #sudo apt-get install -y inotify-tools
 
