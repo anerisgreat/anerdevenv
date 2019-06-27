@@ -1,12 +1,17 @@
 #!/bin/bash
-[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
+
+check_if_exists () {
+    { command -v $1 > /dev/null && return 0 ; } || return 1
+}
 
 check_if_exists_or_abort () {
-    { ! command -v $1; } && \
+    { ! check_if_exists $1 ; } && \
     echo "Must install $1 before proceeding! Aborting." && \
     exit 1 || \
     echo "$1 found"
 }
+
+[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
 
 check_if_exists_or_abort git
 check_if_exists_or_abort gcc
@@ -16,7 +21,7 @@ check_if_exists_or_abort snap
 
 
 #TMUX
-command -v tmux || sudo snap install tmux --classic
+check_if_exists tmux || sudo snap install tmux --classic
 
 command -v curl || { \
     git clone https://github.com/curl/curl.git && \
