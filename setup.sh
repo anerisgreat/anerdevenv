@@ -20,6 +20,20 @@ check_if_exists_or_abort g++
 check_if_exists_or_abort make
 check_if_exists_or_abort snap
 
+#m4
+check_if_exists m4 || {
+    wget ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz && \
+    tar -xzf m4-latest.tar.gz && \
+    tmp=$(tar -tzf m4-latest.tar.gz | head -1 | cut -f1 -d"/") && \
+    cd $tmp && \
+    ./configure && \
+    make && \
+    make test && \
+    sudo make install && \
+    cd .. && \
+    rm -rf $tmp m4-latest.tar.gz
+} || { echo 'Installation of m4 failed' ; exit 1 ; }
+
 #autoconf
 check_if_exists autoconf || {
     wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz && \
