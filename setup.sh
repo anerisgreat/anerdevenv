@@ -23,6 +23,7 @@ check_if_exists_or_abort snap
 #autoconf
 check_if_exists autoconf || {
     wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz && \
+    tar -xzf autoconf-latest.tar.gz && \
     tmp=$(tar -tzf autoconf-latest.tar.gz | head -1 | cut -f1 -d"/") && \
     cd $tmp && \
     ./configure && \
