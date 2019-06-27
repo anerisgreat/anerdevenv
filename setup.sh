@@ -47,7 +47,7 @@ check_if_exists autoconf || {
 } || { echo 'Installation of autoconf failed' ; exit 1 ; }
 
 #automake
-check_if_exists autoconf || {
+check_if_exists automake || {
     wget http://ftp.gnu.org/gnu/automake/automake-1.16.tar.gz && \
     tar -xzf automake-1.16.tar.gz && \
     tmp=$(tar -tzf automake-1.16.tar.gz | head -1 | cut -f1 -d"/") && \
@@ -57,7 +57,7 @@ check_if_exists autoconf || {
     sudo make install && \
     cd .. && \
     rm -rf $tmp automake-1.16.tar.gz
-} || { echo 'Installation of autoconf failed' ; exit 1 ; }
+} || { echo 'Installation of automake failed' ; exit 1 ; }
 
 #TMUX
 check_if_exists tmux || sudo snap install tmux --classic
