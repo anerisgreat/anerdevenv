@@ -63,7 +63,7 @@ check_if_exists automake || {
 check_if_exists libtoolize || {
     wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz && \
     tar -xzf libtool-2.4.6.tar.gz && \
-    tmp=$(tar -tzf automake-1.16.tar.gz | head -1 | cut -f1 -d"/") && \
+    tmp=$(tar -tzf libtool-2.4.6.tar.gz | head -1 | cut -f1 -d"/") && \
     cd $tmp && \
     ./configure && \
     make && \
