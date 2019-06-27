@@ -11,7 +11,8 @@ check_if_exists_or_abort () {
     echo "$1 found"
 }
 
-[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." && exit 1
+[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." \
+    && exit 1
 
 check_if_exists_or_abort git
 check_if_exists_or_abort gcc
@@ -22,14 +23,14 @@ check_if_exists_or_abort snap
 #autoconf
 check_if_exists autoconf || {
     wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz && \
-    tar -xzf autoconf-latest.tar.gz && \
-    cd autoconf-latest && \
+    tmp=$(tar -tzf autoconf-latest.tar.gz | head -1 | cut -f1 -d"/") && \
+    cd $tmp && \
     ./configure && \
     make && \
     make test && \
     sudo make install && \
     cd .. && \
-    rm -rf autoconf-latest autoconf-latest.tar.gz
+    rm -rf $tmp autoconf-latest.tar.gz
 } || { echo 'Installation of autoconf failed' ; exit 1 ; }
 
 #TMUX
