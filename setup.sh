@@ -199,3 +199,5 @@ rm 3.7.0.tar.gz
 sudo rm -r /usr/local/lib/.reveal.js
 sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js
 
+sudo ldconfig
+
