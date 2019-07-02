@@ -193,11 +193,13 @@ check_if_exists "fzf --version" || \
 #tar -xzvf master.tar.gz
 #rm master.tar.gz
 #sudo mv master /usr/local/lib/.reveal.js
-wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz
-tar -xzvf 3.7.0.tar.gz
-rm 3.7.0.tar.gz
-sudo rm -r /usr/local/lib/.reveal.js
-sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js
+find "/usr/local/lib/.reveal.js" -maxdepth 1 -type d > /dev/null || {
+    wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz &&
+    tar -xzvf 3.7.0.tar.gz &&
+    rm 3.7.0.tar.gz &&
+    sudo rm -r /usr/local/lib/.reveal.js &&
+    sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js ;
+}
 
 sudo ldconfig
 
