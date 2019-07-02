@@ -1,4 +1,4 @@
-"__VUNDLE_COPYPASTE_BEGIN_______________________________________________________
+"__VUNDLE_COPYPASTE_BEGIN______________________________________________________
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -78,5 +78,8 @@ set foldlevel=1
 hi Folded ctermbg=187
 set rtp+=~/.fzf
 
-set background=light
+"Line highlighting
+set cursorline
+hi cursorline ctermbg=lightgray cterm=none
 
+set background=light
