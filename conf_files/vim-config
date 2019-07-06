@@ -74,8 +74,8 @@ set expandtab
 
 "Setting automatic folding
 set foldmethod=indent
-set foldlevel=1
-hi Folded ctermbg=187
+set foldlevel=0
+hi Folded ctermbg=187 ctermfg=0
 set rtp+=~/.fzf
 
 "Line highlighting
