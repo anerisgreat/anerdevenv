@@ -1,0 +1,18 @@
+#!/bin/bash
+fname=$(basename -- "$1")
+fname="${fname%.*}"
+echo hi
+lilypond $1 &&
+echo bye &&
+prevsum=$(md5sum $1) &&
+evince $fname.pdf &
+inotifywait -e close_write,moved_to,create -m $(dirname $(realpath $1)) |
+while read -r directory events filename; do
+  if [ "$filename" = "$(basename $1)" ]; then
+      newsum=$(md5sum $1)
+    if [ "$newsum" != "$prevsum" ]; then
+        lilypond $1
+        prevsum=$newsum
+    fi
+  fi
+done
