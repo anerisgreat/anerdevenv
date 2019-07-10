@@ -4,13 +4,15 @@ fname="${fname%.*}"
 
 lilypond $1 "${@:2}" &&
 prevsum=$(md5sum $1) &&
+timidity $fname.midi -Ow &&
 evince $fname.pdf &
 inotifywait -e close_write,moved_to,create -m $(dirname $(realpath $1)) |
 while read -r directory events filename; do
   if [ "$filename" = "$(basename $1)" ]; then
-      newsum=$(md5sum $1)
+    newsum=$(md5sum $1)
     if [ "$newsum" != "$prevsum" ]; then
         lilypond $1 "${@:2}" 
+        timidity $fname.midi -Ow
         prevsum=$newsum
     fi
   fi

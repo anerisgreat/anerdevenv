@@ -139,6 +139,19 @@ check_if_exists cmake || sudo snap install cmake --classic
     } || echo "nvim to vim symbolink linkage failed" ;
 }
 
+#INOTIFY-TOOLS
+check_if_exists inotifywait || {
+    wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz && \
+    tar -xzf inotify-tools-3.14.tar.gz && \
+    tmp=$(tar -tzf inotify-tools-3.14.tar.gz | head -1 | cut -f1 -d"/") && \
+    cd $tmp && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf $tmp inotify-tools-3.14.tar.gz || { echo 'Installation of inotify-tools failed' ; exit 1; } \
+}
+
 #sudo apt-get install -y inotify-tools
 
 
