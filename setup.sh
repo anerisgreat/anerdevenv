@@ -49,6 +49,21 @@ make_folder_if_not_exists() {
     exit 1
 }
 
+check_configure_make_install() {
+    check_if_exists $3 || {
+        wget -O tmp.tar.gz $2 && \
+        tar -xzf tmp.tar.gz && \
+        tmp=$(tar -tzf tmp.tar.gz | head -1 | cut -f1 -d"/") && \
+        cd $tmp && \
+        ./configure && \
+        make && \
+        sudo make install && \
+        cd .. && \
+        rm -rf $tmp tmp.tar.gz && \
+        return 0 ;
+    } || { echo 'Installation of $1 failed' ; exit 1 ; }
+}
+
 [ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." \
     && exit 1
 
@@ -58,57 +73,19 @@ check_if_exists_or_abort g++
 check_if_exists_or_abort make
 check_if_exists_or_abort snap
 
-#m4
-check_if_exists m4 || {
-    wget ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz && \
-    tar -xzf m4-latest.tar.gz && \
-    tmp=$(tar -tzf m4-latest.tar.gz | head -1 | cut -f1 -d"/") && \
-    cd $tmp && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf $tmp m4-latest.tar.gz
-} || { echo 'Installation of m4 failed' ; exit 1 ; }
+check_configure_make_install m4 ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz m4
 
-#autoconf
-check_if_exists autoconf || {
-    wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz && \
-    tar -xzf autoconf-latest.tar.gz && \
-    tmp=$(tar -tzf autoconf-latest.tar.gz | head -1 | cut -f1 -d"/") && \
-    cd $tmp && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf $tmp autoconf-latest.tar.gz
-} || { echo 'Installation of autoconf failed' ; exit 1 ; }
+check_configure_make_install autoconf \
+    ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz \
+    autoconf
 
-#automake
-check_if_exists automake || {
-    wget http://ftp.gnu.org/gnu/automake/automake-1.16.tar.gz && \
-    tar -xzf automake-1.16.tar.gz && \
-    tmp=$(tar -tzf automake-1.16.tar.gz | head -1 | cut -f1 -d"/") && \
-    cd $tmp && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf $tmp automake-1.16.tar.gz
-} || { echo 'Installation of automake failed' ; exit 1 ; }
+check_configure_make_install automake \
+    http://ftp.gnu.org/gnu/automake/automake-1.16.tar.gz \
+    automake
 
-#libtool
-check_if_exists libtoolize || {
-    wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz && \
-    tar -xzf libtool-2.4.6.tar.gz && \
-    tmp=$(tar -tzf libtool-2.4.6.tar.gz | head -1 | cut -f1 -d"/") && \
-    cd $tmp && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf $tmp libtool-2.4.6.tar.gz
-} || { echo 'Installation of libtoolize failed' ; exit 1 ; }
+check_configure_make_install libtoolize \
+    http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz \
+    libtoolize
 
 check_if_exists curl || { \
     git clone https://github.com/curl/curl.git && \
@@ -141,18 +118,9 @@ check_if_exists cmake || sudo snap install cmake --classic || \
     } || echo "nvim to vim symbolink linkage failed" ;
 }
 
-#INOTIFY-TOOLS
-check_if_exists inotifywait || {
-    wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz && \
-    tar -xzf inotify-tools-3.14.tar.gz && \
-    tmp=$(tar -tzf inotify-tools-3.14.tar.gz | head -1 | cut -f1 -d"/") && \
-    cd $tmp && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf $tmp inotify-tools-3.14.tar.gz || { echo 'Installation of inotify-tools failed' ; exit 1; } \
-}
+check_configure_make_install inotify-tools \
+    http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz \
+    inotifywait
 
 #FIREFOX
 check_if_exists firefox || sudo snap install cmake --classic || \
