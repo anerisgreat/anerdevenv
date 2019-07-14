@@ -155,7 +155,7 @@ check_if_exists inotifywait || {
 }
 
 #FIREFOX
-check_if_exists firefox || sudo snap install cmake --classic || \
+check_if_exists firefox || sudo snap install firefox --classic || \
     { echo 'Installation of firefox failed' ; exit 1; }
 
 { find "$HOME/.vim/bundle/Vundle.vim" -maxdepth 1 -type d > /dev/null ; } || {
