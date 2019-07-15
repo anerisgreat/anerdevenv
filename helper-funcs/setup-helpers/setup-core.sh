@@ -66,9 +66,8 @@ install_scripts_from_folder() {
         awk -F '->' '{print $1}' |\
         awk -F ' ' '{print $NF}' |\
         while read line ; do {
-            echo $line
-            sudo rm -rf /usr/local/bin/$line && \
-            sudo unlink /usr/local/bin/$line ;
+            sudo rm -rf /usr/local/bin/$line > /dev/null 2>&1 && \
+            sudo unlink /usr/local/bin/$line > /dev/null 2>&1 ;
         } ; done
 
     chmod -R a+x scripts
