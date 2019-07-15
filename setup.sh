@@ -61,7 +61,7 @@ check_configure_make_install inotify-tools \
     inotifywait
 
 #FIREFOX
-check_if_exists firefox || sudo snap install cmake --classic || \
+check_if_exists firefox || sudo snap install firefox --classic || \
     { echo 'Installation of firefox failed' ; exit 1; }
 
 { find "$HOME/.vim/bundle/Vundle.vim" -maxdepth 1 -type d > /dev/null ; } || {
@@ -120,15 +120,23 @@ check_if_exists "fzf --version" || \
     rm -rf nerd-fonts
 } || { echo 'Installation of nerd-fonts failed' ; exit 1; }
 
-check_if_exists cmake || sudo snap install lsd || \
+check_if_exists lsd || sudo snap install lsd || \
     { echo 'Installation of lsd failed' ; exit 1; }
 
-#Installation of reveal js for pandoc
-#UNTIL THEY FIX IT
-#wget https://github.com/hakimel/reveal.js/archive/master.tar.gz
-#tar -xzvf master.tar.gz
-#rm master.tar.gz
-#sudo mv master /usr/local/lib/.reveal.js
+check_if_exists zsh || {
+    git clone git://git.code.sf.net/p/zsh/code zsh && \
+    cd zsh && \
+    Util/preconfig && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf zsh ;
+} || { echo 'Installation of ZSH failed' ; exit 1; }
+
+check_if_exists NONEXISTENT || {
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+} || { echo 'Installation of Oh My ZSH failed' ; exit 1; }
 
 check_if_exists pandoc || {
     wget https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz && \
@@ -163,4 +171,5 @@ wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
 }
 
 sudo ldconfig
+
 
