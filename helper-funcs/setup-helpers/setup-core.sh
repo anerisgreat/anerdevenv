@@ -10,21 +10,19 @@ check_if_exists_or_abort () {
 }
 
 check_symlink() {
-    tmp=$(find "$1" -maxdepth 1 -type l)
-    target=$(readlink -f $tmp)
-    [ $target == $2 ] && return 0 || return 1
+    tmp=$(find "$1" -maxdepth 1 -type l 2>&1 )
+    target=$(readlink -f "$tmp")
+    [ "$target" == "$2" ] && return 0 || return 1
 }
-
 
 check_symlink_make_if_not() {
     check_symlink $1 $2 && return 0
-    echo "NO SYMLINK"
-    find "$1" -maxdepth 1 -type l && unlink $1 && ln -s $2 $1 && return 0
-    echo "NO WHATEVER"
-    find "$1" -maxdepth 1 -type f && rm $1 && ln -s $2 $1 && return 0
-    echo "NO HOOYAH"
-    find "$1" -maxdepth 1 -type d && rm -r $1 && ln -s $2 $1 && return 0
-    echo "FEKKER FEKKER"
+    { find "$1" -maxdepth 1 -type l > /dev/null 2>&1 ; }&& \
+        unlink $1 && ln -s $2 $1 && return 0
+    { find "$1" -maxdepth 1 -type f > /dev/null 2>&1 ; }&& \
+        rm $1 && ln -s $2 $1 && return 0
+    { find "$1" -maxdepth 1 -type d > /dev/null 2>&1 ; }&& \
+        rm -r $1 && ln -s $2 $1 && return 0
     ln -s $2 $1 && return 0
     return 1
 }
@@ -62,3 +60,28 @@ check_configure_make_install() {
     } || { echo 'Installation of $1 failed' ; exit 1 ; }
 }
 
+#Custom script installation
+install_scripts_from_folder() {
+    ls -la /usr/local/bin/ | grep "anerdevenv/$1" |\
+        awk -F '->' '{print $1}' |\
+        awk -F ' ' '{print $NF}' |\
+        while read line ; do {
+            echo $line
+            sudo rm -rf /usr/local/bin/$line && \
+            sudo unlink /usr/local/bin/$line ;
+        } ; done
+
+    chmod -R a+x scripts
+    sudo ln -s $PWD/$1/* /usr/local/bin/ || \
+        { echo "Script linkage failed" && exit 1 ; }
+}
+
+#Check applies to all scripts that import
+[ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." \
+    && exit 1
+
+check_if_exists_or_abort git
+check_if_exists_or_abort gcc
+check_if_exists_or_abort g++
+check_if_exists_or_abort make
+check_if_exists_or_abort snap

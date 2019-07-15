@@ -1,4 +1,0 @@
-relevantPID=$(tmux list-panes -F '#{pane_pid} #{pane_active}' | grep -w 1 | tr -s ' ' | cut -d ' ' -f 1)
-procList=$(ps -o comm= -g$relevantPID | tr -s ' ')
-procName=$(echo $procList | rev | cut -d ' ' -f1 | rev)
-echo $procName
