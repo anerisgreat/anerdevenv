@@ -1,7 +1,9 @@
+#Checks if a command exists
 check_if_exists () {
     { command -v $1 > /dev/null && return 0 ; } || return 1
 }
 
+#Checks if a command ($1) exists, if not aborts
 check_if_exists_or_abort () {
     { ! check_if_exists $1 ; } && \
     echo "Must install $1 before proceeding! Aborting." && \
@@ -9,12 +11,14 @@ check_if_exists_or_abort () {
     #echo "$1 found"
 }
 
+#Check if a symlink exists from source ($2) to target ($1)
 check_symlink() {
     tmp=$(find "$1" -maxdepth 1 -type l 2>&1 )
     target=$(readlink -f "$tmp")
     [ "$target" == "$2" ] && return 0 || return 1
 }
 
+#Creates a symlink from source ($2) to target ($1), removing what was there
 check_symlink_make_if_not() {
     check_symlink $1 $2 && return 0
     { find "$1" -maxdepth 1 -type l > /dev/null 2>&1 ; }&& \
@@ -27,6 +31,8 @@ check_symlink_make_if_not() {
     return 1
 }
 
+#Creates a symoink from source ($2) to target ($1), removing what was there
+    #under root user
 sudo_check_symlink_make_if_not() {
     check_symlink $1 $2 && return 0
     find "$1" -maxdepth 1 -type l > /dev/null && sudo unlink $1 && \
@@ -39,12 +45,14 @@ sudo_check_symlink_make_if_not() {
     return 1
 }
 
+#Makes a folder if it doesn't exist
 make_folder_if_not_exists() {
     { find "$1" -maxdepth 1 -type d > /dev/null || mkdir $1 -p ; } && return 0
     echo "Could not find directory $1 and encountered error creating it!"
     exit 1
 }
 
+#Installs package of name ($1) from url ($2), if the command ($3) doesn't exist
 check_configure_make_install() {
     check_if_exists $3 || {
         wget -O tmp.tar.gz $2 && \
@@ -60,7 +68,7 @@ check_configure_make_install() {
     } || { echo 'Installation of $1 failed' ; exit 1 ; }
 }
 
-#Custom script installation
+#Installs all script from folder to /usr/local/bin by symbolic linking
 install_scripts_from_folder() {
     ls -la /usr/local/bin/ | grep "anerdevenv/$1" |\
         awk -F '->' '{print $1}' |\
