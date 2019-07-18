@@ -35,19 +35,4 @@ check_if_exists "fzf --version" || \
 check_if_exists lsd || sudo snap install lsd || \
     { echo 'Installation of lsd failed' ; exit 1; }
 
-check_if_exists zsh || {
-    git clone git://git.code.sf.net/p/zsh/code zsh && \
-    cd zsh && \
-    Util/preconfig && \
-    ./configure && \
-    make && \
-    sudo make install && \
-    cd .. && \
-    rm -rf zsh ;
-} || { echo 'Installation of ZSH failed' ; exit 1; }
-
-check_if_exists NONEXISTENT || {
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-} || { echo 'Installation of Oh My ZSH failed' ; exit 1; }
-
 install_scripts_from_folder scripts/station
