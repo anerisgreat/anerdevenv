@@ -32,7 +32,17 @@ check_if_exists "fzf --version" || \
     rm -rf nerd-fonts
 } || { echo 'Installation of nerd-fonts failed' ; exit 1; }
 
-check_if_exists lsd || sudo snap install lsd || \
-    { echo 'Installation of lsd failed' ; exit 1; }
+{ find "$HOME/.bash-git-prompt" -maxdepth 1 -type d > /dev/null ; } || {
+    git clone https://github.com/magicmonty/bash-git-prompt.git \
+        ~/.bash-git-prompt --depth 1
+} || { echo 'Installation of git prompt failed' ; exit 1; }
+
+#Must install LSD from sources, snap verison not good
+#check_if_exists lsd || sudo snap install lsd --classic || \
+#    { echo 'Installation of lsd failed' ; exit 1; }
+
+check_symlink_make_if_not $HOME/.bashrc \
+    $PWD/conf-files/bashrc || \
+    { echo "bashrc link failed" && exit 1 ; }
 
 install_scripts_from_folder scripts/station
