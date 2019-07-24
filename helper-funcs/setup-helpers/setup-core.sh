@@ -11,6 +11,23 @@ check_if_exists_or_abort () {
     #echo "$1 found"
 }
 
+#Attempts to install package from package manager
+try_install_package_manager() {
+    {
+        check_if_exists apt-get && \
+        sudo apt-get install -y $1 ;
+    } || \
+    {
+        check_if_exists pacman && \
+        sudo pacman -Sy $1 ;
+    } || \
+    {
+        check_if_exists yay &&
+        yay -Sy $1 ;
+    } || return 1
+    return 0
+}
+
 #Check if a symlink exists from source ($2) to target ($1)
 check_symlink() {
     tmp=$(find "$1" -maxdepth 1 -type l 2>&1 )
@@ -54,7 +71,9 @@ make_folder_if_not_exists() {
 
 #Installs package of name ($1) from url ($2), if the command ($3) doesn't exist
 check_configure_make_install() {
-    check_if_exists $3 || {
+    check_if_exists $3 || \
+    try_install_package_manager $1 || \
+    {
         wget -O tmp.tar.gz $2 && \
         tar -xzf tmp.tar.gz && \
         tmp=$(tar -tzf tmp.tar.gz | head -1 | cut -f1 -d"/") && \
@@ -87,8 +106,3 @@ install_scripts_from_folder() {
 [ "$USER" = root ] && echo "This script shouldn't be run as root. Aborting." \
     && exit 1
 
-check_if_exists_or_abort git
-check_if_exists_or_abort gcc
-check_if_exists_or_abort g++
-check_if_exists_or_abort make
-check_if_exists_or_abort snap

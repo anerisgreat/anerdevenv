@@ -1,6 +1,17 @@
 #!/bin/bash
 source $PWD/helper-funcs/setup-helpers/setup-core.sh
 
+check_package_try_or_abort() {
+    check_if_exists $1 || \
+        try_install_from_package_manager $1 ||
+        { echo "$1 install failure! Aborting." ; exit 1; }
+}
+check_package_try_abort git
+check_package_try_abort gcc
+check_package_try_abort g++
+check_package_try_abort make
+check_package_try_abort snap
+
 #m4
 check_configure_make_install m4 ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz m4
 

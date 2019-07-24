@@ -128,3 +128,6 @@ fi
 #alias ll='lsd -alF'
 #alias la='lsd -A'
 #alias l='lsd -CF'
+
+set -o vi
+
