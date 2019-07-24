@@ -72,7 +72,7 @@ make_folder_if_not_exists() {
 #Installs package of name ($1) from url ($2), if the command ($3) doesn't exist
 check_configure_make_install() {
     check_if_exists $3 || \
-    try_install_package_manager $1 || \
+    try_install_from_package_manager $1 || \
     {
         wget -O tmp.tar.gz $2 && \
         tar -xzf tmp.tar.gz && \

@@ -31,7 +31,7 @@ check_configure_make_install libtoolize \
     libtoolize
 
 #curl
-check_if_exists curl || { \
+check_if_exists curl || try_install_from_package_manager curl || { \
     git clone https://github.com/curl/curl.git && \
     cd curl && \
     #env PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --with-ssl
@@ -43,7 +43,7 @@ check_if_exists curl || { \
     rm -rf curl || { echo 'Installation of CURL failed' ; exit 1; } }
 
 #tmux
-check_if_exists tmux || sudo snap install tmux --classic || \
+check_if_exists tmux || try_install_from_package_manager tmux || \
     { echo 'Installation of tmux failed' ; exit 1; }
 
 check_symlink_make_if_not $HOME/.tmux.conf $PWD/conf-files/tmux.conf || \

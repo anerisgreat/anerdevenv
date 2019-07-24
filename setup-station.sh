@@ -2,7 +2,7 @@
 source $PWD/helper-funcs/setup-helpers/setup-core.sh
 
 #firefox
-check_if_exists firefox || sudo snap install firefox --classic || \
+check_if_exists firefox || try_install_from_package_manager firefox || \
     { echo 'Installation of firefox failed' ; exit 1; }
 
 #i3

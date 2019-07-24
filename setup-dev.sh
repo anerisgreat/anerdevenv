@@ -2,11 +2,12 @@
 source $PWD/helper-funcs/setup-helpers/setup-core.sh
 
 #CMake
-check_if_exists cmake || sudo snap install cmake --classic || \
+check_if_exists cmake || try_install_from_package_manager cmake || \
     { echo 'Installation of cmake failed' ; exit 1; }
 
 #NEOVIM
 {   check_if_exists nvim || \
+    try_install_from_package_manager neovim ||
     { wget https://github.com/neovim/neovim/releases/download/v0.3.7/nvim.appimage && \
         chmod u+x nvim.appimage && sudo mv ./nvim.appimage /usr/bin/nvim  ; } \
 || { echo 'Installation of NVIM failed' ; exit 1; } } && { \

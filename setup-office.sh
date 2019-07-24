@@ -2,7 +2,7 @@
 source $PWD/helper-funcs/setup-helpers/setup-core.sh
 
 #pandoc
-check_if_exists pandoc || {
+check_if_exists pandoc || try_install_from_package_manager pandoc || {
     wget https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz && \
     sudo tar -xvzf pandoc-2.7.3-linux.tar.gz --strip-components 1 -C /usr/local/ && \
     rm pandoc-2.7.3-linux.tar.gz || \
@@ -10,7 +10,7 @@ check_if_exists pandoc || {
 }
 
 #pdflatex
-check_if_exists pdflatex || {
+check_if_exists pdflatex || try_install_from_package_manager texlive-full || {
 wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
     tar -xzf install-tl-unx.tar.gz && \
     tmp=$(tar -tzf install-tl-unx.tar.gz | head -1 | cut -f1 -d"/") && \
