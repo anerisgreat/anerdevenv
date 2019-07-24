@@ -12,7 +12,7 @@ check_if_exists_or_abort () {
 }
 
 #Attempts to install package from package manager
-try_install_package_manager() {
+try_install_from_package_manager() {
     {
         check_if_exists apt-get && \
         sudo apt-get install -y $1 ;
