@@ -31,30 +31,30 @@ fi
 
 shopt -s checkwinsize
 
-
 # ANSI color codes
-#"\[\033[00m\]"    # reset
-#"\[\033[1m\]"    # hicolor
-#"\[\033[4m\]"    # underline
-#"\[\033[7m\]"   # inverse background and foreground
-#"\[\033[30m\]" # foreground black
-#"\[\033[31m\]" # foreground red
-#"\[\033[32m\]" # foreground green
-#"\[\033[33m\]" # foreground yellow
-#"\[\033[34m\]" # foreground blue
-#"\[\033[35m\]" # foreground magenta
-#"\[\033[36m\]" # foreground cyan
-#"\[\033[37m\]" # foreground white
-#"\[\033[40m\]" # background black
-#"\[\033[41m\]" # background red
-#"\[\033[42m\]" # background green
-#"\[\033[43m\]" # background yellow
-#"\[\033[44m\]" # background blue
-#"\[\033[45m\]" # background magenta
-#"\[\033[46m\]" # background cyan
-#"\[\033[47m\]" # background white
-PS1_start="\e[0m(\e[0;34m\u\e[0m@\h\e[0m) \e[0;35m\w\e[0m"
-PS1_end="\r\n\e[1;31m\$\e[0m "
+#"\[\[\033[00m\]"    # reset
+#"\[\[\033[1m\]"    # hicolor
+#"\[\[\033[4m\]"    # underline
+#"\[\[\033[7m\]"   # inverse background and foreground
+#"\[\[\033[30m\]" # foreground black
+#"\[\[\033[31m\]" # foreground red
+#"\[\[\033[32m\]" # foreground green
+#"\[\[\033[33m\]" # foreground yellow
+#"\[\[\033[34m\]" # foreground blue
+#"\[\[\033[35m\]" # foreground magenta
+#"\[\[\033[36m\]" # foreground cyan
+#"\[\[\033[37m\]" # foreground white
+#"\[\[\033[40m\]" # background black
+#"\[\[\033[41m\]" # background red
+#"\[\[\033[42m\]" # background green
+#"\[\[\033[43m\]" # background yellow
+#"\[\[\033[44m\]" # background blue
+#"\[\[\033[45m\]" # background magenta
+#"\[\[\033[46m\]" # background cyan
+#"\[\[\033[47m\]" # background white
+PS1_start="\[\033[0m\](\[\033[0;34m\]\u\[\033[0m\]@\h\[\033[0m\]) "\
+"\[\033[0;35m\]\w\[\033[0m\]"
+PS1_end="\r\n\[\033[1;31m\]\$\[\033[0m\] "
 
 PS1_command=$PS1_start$PS1_end
 #DOESN'T WORK
@@ -65,7 +65,6 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1=$PS1_command_stripped
 fi
-
 
 #GIT prompt
 if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
