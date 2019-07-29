@@ -5,6 +5,10 @@ source $PWD/helper-funcs/setup-helpers/setup-core.sh
 check_if_exists cmake || try_install_from_package_manager cmake || \
     { echo 'Installation of cmake failed' ; exit 1; }
 
+#Unbuffer
+check_if_exists unbuffer || try_install_from_package_manager expect || \
+    { echo 'Installation of unbuffer/expect failed' ; exit 1; }
+
 #NEOVIM
 {   check_if_exists nvim || \
     try_install_from_package_manager neovim ||
