@@ -46,6 +46,10 @@ check_if_exists curl || try_install_from_package_manager curl || { \
 check_if_exists tmux || try_install_from_package_manager tmux || \
     { echo 'Installation of tmux failed' ; exit 1; }
 
+#xclip
+check_if_exists xclip || try_install_from_package_manager xclip || \
+    { echo 'Installation of xclip failed' ; exit 1; }
+
 check_symlink_make_if_not $HOME/.tmux.conf $PWD/conf-files/tmux.conf || \
     { echo "tmux config link failed" && exit 1 ; }
 
