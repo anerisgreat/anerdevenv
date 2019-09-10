@@ -12,6 +12,10 @@ check_package_try_or_abort g++
 check_package_try_or_abort make
 check_package_try_or_abort snap
 
+#wget
+check_if_exists wget || try_install_from_package_manager wget || \
+    { echo 'Installation of wget failed' ; exit 1; }
+
 #m4
 check_configure_make_install m4 ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz m4
 
@@ -45,10 +49,6 @@ check_if_exists curl || try_install_from_package_manager curl || { \
 #tmux
 check_if_exists tmux || try_install_from_package_manager tmux || \
     { echo 'Installation of tmux failed' ; exit 1; }
-
-#tmux
-check_if_exists wget || try_install_from_package_manager wget || \
-    { echo 'Installation of wget failed' ; exit 1; }
 
 #xclip
 check_if_exists xclip || try_install_from_package_manager xclip || \
