@@ -50,17 +50,29 @@ check_if_exists curl || try_install_from_package_manager curl || { \
 check_if_exists tmux || try_install_from_package_manager tmux || \
     { echo 'Installation of tmux failed' ; exit 1; }
 
+check_symlink_make_if_not $HOME/.tmux.conf $PWD/conf-files/tmux.conf || \
+    { echo "tmux config link failed" && exit 1 ; }
+
 #xclip
 check_if_exists xclip || try_install_from_package_manager xclip || \
     { echo 'Installation of xclip failed' ; exit 1; }
-
-check_symlink_make_if_not $HOME/.tmux.conf $PWD/conf-files/tmux.conf || \
-    { echo "tmux config link failed" && exit 1 ; }
 
 #inotify-tools
 check_configure_make_install inotify-tools \
     http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz \
     inotifywait
+
+#fzf
+check_if_exists "fzf --version" || \
+{
+    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.fzf && \
+    sudo $HOME/.fzf/install --all ;
+} || { echo "fzf install failed" && exit 1 ; }
+
+check_symlink_make_if_not $HOME/.bashrc \
+    $PWD/conf-files/bashrc || \
+    { echo "bashrc link failed" && exit 1 ; }
+
 
 export TERM=xterm-256color
 
