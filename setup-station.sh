@@ -5,6 +5,10 @@ source $PWD/helper-funcs/setup-helpers/setup-core.sh
 check_if_exists firefox || try_install_from_package_manager firefox || \
     { echo 'Installation of firefox failed' ; exit 1; }
 
+#flameshot
+check_if_exists flameshot || try_install_from_package_manager flameshot || \
+    { echo 'Installation of flameshot failed' ; exit 1; }
+
 #st
 check_if_exists st || \
 { \

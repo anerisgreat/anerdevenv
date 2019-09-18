@@ -200,6 +200,10 @@ bar {
     status_command i3status
 }
 
+#Screenshot
+bindsym Print exec flameshot gui
+bindsym $mod+Print exec flameshot
+
 new_window 1pixel
 #Disable mouse focus
 focus_follows_mouse no
