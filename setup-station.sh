@@ -14,7 +14,7 @@ check_if_exists zsh || { try_install_from_package_manager zsh ; } || \
 
 { grep $(whoami) /etc/passwd  | grep zsh > /dev/null ; } || {
 echo "Changing shell to zsh" &&
-chsh -s /bin/zsh ; }
+chsh -s $(which zsh | head -1) ; }
 
 #Oh My Zsh
 find "$HOME/.oh-my-zsh" -maxdepth 1 -type d > /dev/null ||\
