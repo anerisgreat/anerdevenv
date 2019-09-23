@@ -22,6 +22,11 @@ find "$HOME/.oh-my-zsh" -maxdepth 1 -type d > /dev/null ||\
 rm install.sh ; } ||\
 { echo 'Installation of oh-my-zsh failed' ; exit 1 ; }
 
+find "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" -maxdepth 1 -type d > /dev/null ||\
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ||
+{ echo 'Installation of zsh-syntax-highlighting failed.' && exit 1 ; }
+
 #firefox
 check_if_exists firefox || try_install_from_package_manager firefox || \
     { echo 'Installation of firefox failed' ; exit 1; }
