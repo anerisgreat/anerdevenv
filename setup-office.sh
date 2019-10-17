@@ -31,10 +31,10 @@ wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
 
 #revealjs
 { find "/usr/local/lib/.reveal.js" -maxdepth 1 -type d > /dev/null ; } || {
-    wget https://github.com/hakimel/reveal.js/archive/3.7.0.tar.gz &&
-    tar -xzvf 3.7.0.tar.gz &&
-    rm 3.7.0.tar.gz &&
-    sudo mv reveal.js-3.7.0 /usr/local/lib/.reveal.js ;
+    wget https://github.com/hakimel/reveal.js/archive/master.zip &&
+    unzip master.zip &&
+    rm master.zip &&
+    sudo mv reveal.js-master /usr/local/lib/.reveal.js ;
 }
 
 install_scripts_from_folder scripts/office

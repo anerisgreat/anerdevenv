@@ -1,4 +1,17 @@
 #!/bin/bash
-filename=$(basename -- "$1")
-filename="${filename%.*}"
-pandoc -t revealjs -s -o $filename.html $1 -V revealjs-url=/usr/local/lib/.reveal.js --self-contained "${@:2}"
+fname=$(basename -- "$1")
+fname="${fname%.*}"
+pandoc -t revealjs -s -o $fname.html $1 -V revealjs-url=/usr/local/lib/.reveal.js --self-contained "${@:2}" &&
+prevsum=$(md5sum $1) &&
+firefox $fname.html &
+inotifywait -e close_write,moved_to,create -m $(dirname $(realpath $1)) |
+while read -r directory events filename; do
+  if [ "$filename" = "$(basename $1)" ]; then
+    newsum=$(md5sum $1)
+    if [ "$newsum" != "$prevsum" ]; then
+        pandoc -t revealjs -s -o $fname.html $1 -V revealjs-url=/usr/local/lib/.reveal.js --self-contained "${@:2}" &&
+        prevsum=$newsum
+        echo "NITS"
+    fi
+  fi
+done
