@@ -35,14 +35,12 @@ check_if_exists firefox || try_install_from_package_manager firefox || \
 check_if_exists flameshot || try_install_from_package_manager flameshot || \
     { echo 'Installation of flameshot failed' ; exit 1; }
 
-#st
-check_if_exists st || \
-{ \
-    cd submodules/st && \
-    make && sudo make install && \
-    cd ../../; \
-} || { echo 'Installation of st failed.' && exit 1; }
+check_if_exists xfce4-terminal || try_install_from_package_manager xfce4-terminal || \
+    { echo 'Installation of xfce4-terminal failed' ; exit 1; }
 
+check_symlink_make_if_not $HOME/.config/xfce4/terminal/terminalrc \
+    $PWD/conf-files/terminalrc || \
+    { echo "xfce4 terminal config link failed" && exit 1 ; }
 
 #i3
 make_folder_if_not_exists $HOME/.config/i3
