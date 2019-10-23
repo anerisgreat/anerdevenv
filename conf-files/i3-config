@@ -207,3 +207,5 @@ bindsym $mod+Print exec flameshot
 new_window 1pixel
 #Disable mouse focus
 focus_follows_mouse no
+
+exec --no-startup-id feh --bg-fill ~/.config/wallpapers/enceladus.jpg

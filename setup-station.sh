@@ -48,6 +48,10 @@ check_symlink_make_if_not $HOME/.config/i3/config \
     $PWD/conf-files/i3-config || \
     { echo "i3 config link failed" && exit 1 ; }
 
+check_symlink_make_if_not $HOME/.config/wallpapers \
+    $PWD/wallpapers || \
+    { echo "wallpapers link failed" && exit 1 ; }
+
 make_folder_if_not_exists $HOME/.config/i3status
 check_symlink_make_if_not $HOME/.config/i3status/config \
     $PWD/conf-files/i3status-config || \
