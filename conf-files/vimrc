@@ -81,7 +81,7 @@ set rtp+=~/.fzf
 
 "Line highlighting
 set cursorline
-hi cursorline ctermbg=lightgray cterm=none
+hi cursorline ctermbg=white cterm=none
 
 set background=light
 
