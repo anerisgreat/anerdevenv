@@ -18,6 +18,9 @@ source $PWD/setup-harvey.sh
 #__MUSIC_______________________________________________________________________
 source $PWD/setup-music.sh
 
+#__UNI_________________________________________________________________________
+source $PWD/setup-uni.sh
+
 #TODO: where does this go?
 sudo ldconfig
 
