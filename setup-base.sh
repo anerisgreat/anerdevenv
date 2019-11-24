@@ -10,7 +10,6 @@ check_package_try_or_abort git
 check_package_try_or_abort gcc
 check_package_try_or_abort g++
 check_package_try_or_abort make
-check_package_try_or_abort snap
 
 #wget
 check_if_exists wget || try_install_from_package_manager wget || \

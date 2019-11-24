@@ -71,10 +71,6 @@ check_symlink_make_if_not $HOME/.config/i3status/config \
         ~/.bash-git-prompt --depth 1
 } || { echo 'Installation of git prompt failed' ; exit 1; }
 
-#Must install LSD from sources, snap verison not good
-#check_if_exists lsd || sudo snap install lsd --classic || \
-#    { echo 'Installation of lsd failed' ; exit 1; }
-
 check_symlink_make_if_not $HOME/.bashrc \
     $PWD/conf-files/bashrc || \
     { echo "bashrc link failed" && exit 1 ; }
