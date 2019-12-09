@@ -9,9 +9,9 @@ while read -r directory events filename; do
   if [ "$filename" = "$(basename $1)" ]; then
     newsum=$(md5sum $1)
     if [ "$newsum" != "$prevsum" ]; then
-        pandoc -t revealjs -s -o $fname.html $1 -V revealjs-url=$HOME/.reveal.js --self-contained "${@:2}" &&
-        prevsum=$newsum
-        echo "NITS"
+        pandoc -t revealjs -s -o $fname.html $1 -V revealjs-url=$HOME/.reveal.js --self-contained "${@:2}" && \
+        prevsum=$newsum && \
+        echo "Generated: $(date)"
     fi
   fi
 done
