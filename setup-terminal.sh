@@ -12,6 +12,20 @@ check_if_exists "fzf --version" || \
 check_if_exists zsh || { try_install_from_package_manager zsh ; } || \
     { echo 'Installation of zsh failed' &&  exit 1; }
 
+#emacs
+check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
+    { echo 'Installation of emacs failed' &&  exit 1; }
+
+{ find "$HOME/.emacs.d" -maxdepth 1 -type d > /dev/null ; } || \
+{ git clone https://github.com/hlissner/doom-emacs ~/.emacs.d && \
+    ~/.emacs.d/bin/doom install ; } || \
+{ echo 'Installation of spacemacs failed' && exit 1 ; }
+
+check_symlink_make_if_not $HOME/.doom.d $PWD/conf-files/doom.d || \
+{ echo "Symlink .doom.d failed" && exit 1 ; }
+
+gpg --homedir ~/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
+
 { grep $(whoami) /etc/passwd  | grep zsh > /dev/null ; } || {
 echo "Changing shell to zsh" &&
 chsh -s $(which zsh | head -1) ; }
