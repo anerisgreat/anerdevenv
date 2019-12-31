@@ -21,7 +21,7 @@ check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
     ~/.emacs.d/bin/doom install ; } || \
 { echo 'Installation of spacemacs failed' && exit 1 ; }
 
-check_symlink_make_if_not $HOME/.doom.d $PWD/conf-files/doom.d || \
+check_symlink_make_if_not $HOME/.config/doom $PWD/conf-files/doom.d || \
 { echo "Symlink .doom.d failed" && exit 1 ; }
 
 gpg --homedir ~/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
