@@ -13,6 +13,7 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'scrooloose/nerdtree'
 Plugin 'kien/ctrlp.vim'
 Plugin 'vim-syntastic/syntastic'
+Plugin 'jceb/vim-orgmode'
 
 call vundle#end()            " required
 filetype plugin indent on    " required

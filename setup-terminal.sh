@@ -25,6 +25,9 @@ check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
 git clone git://github.com/bbatsov/prelude.git ~/.prelude || \
 { echo 'Installation of PRELUDE emacs failed' && exit 1 ; }
 
+check_symlink_make_if_not $HOME/.prelude/personal $PWD/conf-files/prelude/personal || \
+{ echo "Symlink .prelude/personal failed" && exit 1 ; }
+
 { find "$HOME/.emacs.doom.d" -maxdepth 1 -type d > /dev/null ; } || \
 { git clone https://github.com/hlissner/doom-emacs ~/.emacs.doom.d && \
     ~/.emacs.doom.d/bin/doom install ; } || \
