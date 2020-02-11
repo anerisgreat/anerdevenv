@@ -21,12 +21,11 @@ check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
     cd ~/.chemacs && ./install.sh ; } || \
 { echo 'Installation of DOOM emacs failed' && exit 1 ; }
 
-{ find "$HOME/.prelude" -maxdepth 1 -type d > /dev/null ; } || \
-git clone git://github.com/bbatsov/prelude.git ~/.prelude || \
-{ echo 'Installation of PRELUDE emacs failed' && exit 1 ; }
-
-check_symlink_make_if_not $HOME/.prelude/personal $PWD/conf-files/prelude/personal || \
-{ echo "Symlink .prelude/personal failed" && exit 1 ; }
+make_folder_if_not_exists $HOME/.config/lazymacs
+check_symlink_make_if_not $HOME/.config/lazymacs/init.el $PWD/conf-files/lazymacs/init.el || \
+{ echo "Symlink of lazymacs failed" && exit 1 ; }
+check_symlink_make_if_not $HOME/.config/lazymacs/config.org $PWD/conf-files/lazymacs/config.org || \
+{ echo "Symlink of lazymacs failed" && exit 1 ; }
 
 { find "$HOME/.emacs.doom.d" -maxdepth 1 -type d > /dev/null ; } || \
 { git clone https://github.com/hlissner/doom-emacs ~/.emacs.doom.d && \
@@ -36,7 +35,7 @@ check_symlink_make_if_not $HOME/.prelude/personal $PWD/conf-files/prelude/person
 check_symlink_make_if_not $HOME/.config/doom $PWD/conf-files/doom.d || \
 { echo "Symlink .doom.d failed" && exit 1 ; }
 
-check_symlink_make_if_not $HOME/.config/.emacs-profiles.el $PWD/conf-files/emacs-profiles.el || \
+check_symlink_make_if_not $HOME/.emacs-profiles.el $PWD/conf-files/emacs-profiles.el || \
 { echo "Symlink emacs profiles failed" && exit 1 ; }
 
 gpg --homedir ~/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
