@@ -1,6 +1,6 @@
 (
-    ("doom" . ((user-emacs-directory . "~/.emacs.doom.d")
-        (env . (("DOOMDIR" . "~/.config/doom")))
+    ("doom" . ((user-emacs-directory . "~/.config/emacs/doom.d")
+        (env . (("DOOMDIR" . "~/.config/emacs/doom")))
         ))
-    ("default" . ((user-emacs-directory . "~/.config/lazymacs")))
+    ("default" . ((user-emacs-directory . "~/.config/emacs/lazymacs")))
  )

@@ -16,23 +16,25 @@ check_if_exists zsh || { try_install_from_package_manager zsh ; } || \
 check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
     { echo 'Installation of emacs failed' &&  exit 1; }
 
-{ find "$HOME/.chemacs" -maxdepth 1 -type d > /dev/null ; } || \
-{ git clone https://github.com/plexus/chemacs.git ~/.chemacs && \
-    cd ~/.chemacs && ./install.sh ; } || \
+{ find "$HOME/.config/emacs/chemacs" -maxdepth 1 -type d > /dev/null ; } || \
+{ git clone https://github.com/plexus/chemacs.git $HOME/.config/emacs/chemacs && \
+    $HOME/.config/emacs/chemacs/install.sh ; } || \
+{ echo 'Installation of Chemacs failed' && exit 1 ; }
+
+make_folder_if_not_exists $HOME/.config/emacs
+make_folder_if_not_exists $HOME/.config/emacs/lazymacs
+
+{ find "$HOME/.config/emacs/lazymacs/init.el" -maxdepth 1 -type f > /dev/null ; } || \
+    cp $PWD/conf-files/lazymacs/init.el $HOME/.config/emacs/lazymacs/ ||
+{ echo 'Copying of init.el for lazymacs failed' && exit 1 ; }
+check_symlink_make_if_not $HOME/.config/emacs/lazymacs/config.org $PWD/conf-files/lazymacs/config.org || \
+{ echo "Symlink of lazymacs failed" && exit 1 ; }
+
+{ find "$HOME/.config/emacs/doom.d" -maxdepth 1 -type d > /dev/null ; } || \
+git clone https://github.com/hlissner/doom-emacs $HOME/.config/emacs/doom.d || \
 { echo 'Installation of DOOM emacs failed' && exit 1 ; }
 
-make_folder_if_not_exists $HOME/.config/lazymacs
-check_symlink_make_if_not $HOME/.config/lazymacs/init.el $PWD/conf-files/lazymacs/init.el || \
-{ echo "Symlink of lazymacs failed" && exit 1 ; }
-check_symlink_make_if_not $HOME/.config/lazymacs/config.org $PWD/conf-files/lazymacs/config.org || \
-{ echo "Symlink of lazymacs failed" && exit 1 ; }
-
-{ find "$HOME/.emacs.doom.d" -maxdepth 1 -type d > /dev/null ; } || \
-{ git clone https://github.com/hlissner/doom-emacs ~/.emacs.doom.d && \
-    ~/.emacs.doom.d/bin/doom install ; } || \
-{ echo 'Installation of DOOM emacs failed' && exit 1 ; }
-
-check_symlink_make_if_not $HOME/.config/doom $PWD/conf-files/doom.d || \
+check_symlink_make_if_not $HOME/.config/emacs/doom $PWD/conf-files/doom.d || \
 { echo "Symlink .doom.d failed" && exit 1 ; }
 
 check_symlink_make_if_not $HOME/.emacs-profiles.el $PWD/conf-files/emacs-profiles.el || \
