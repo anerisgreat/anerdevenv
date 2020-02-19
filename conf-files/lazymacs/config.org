@@ -35,7 +35,7 @@ Defining a function to install a package unless already installed
 #+end_src
 ** No backup files
 #+begin_src emacs-lisp :results silent
-(setq make-backup-files nil)
+  (setq make-backup-files nil)
 #+end_src
 * UI
 ** Clean UI
@@ -47,9 +47,14 @@ Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
   (menu-bar-mode -1)   ; no menu bar
 #+end_src
 ** Window dividers
-Disabling window dividers
+Customizing space between windows
 #+begin_src emacs-lisp :results silent
-(window-divider-mode 0)
+  (window-divider-mode 0)
+  (set-face-foreground 'vertical-border "LightGray")
+  (set-face-background 'fringe "WhiteSmoke")
+  ;For theme-independent configuration
+  ;(set-face-foreground 'vertical-border (face-attribute 'mode-line :background))
+  ;(set-face-background 'fringe (face-attribute 'mode-line-inactive :background))
 #+end_src
 ** Text
 *** Text format
@@ -71,19 +76,24 @@ Setting font size to 10. The value to place is font-size * 10
 #+end_src
 *** Line wrap
  #+begin_src emacs-lisp :results silent
-(visual-line-mode t)
+(global-visual-line-mode t)
  #+end_src
 *** Parenthesis
 Highlight matching parenthesis
  #+begin_src emacs-lisp :results silent
 (show-paren-mode 1)
  #+end_src
+*** Tabs
+Settings tabs with Smart Tabs
+ #+begin_src emacs-lisp :results silent
+
+ #+end_src
 ** Modeline
 #+begin_src emacs-lisp :results silent
-(package-unless-install 'smart-mode-line)
-(setq sml/no-confirm-load-theme t)
-(sml/setup)
-(setq sml/theme 'light)
+;(package-unless-install 'smart-mode-line)
+;(setq sml/no-confirm-load-theme t)
+;(sml/setup)
+;(setq sml/theme 'light)
 #+end_src
 ** Which-Key
 #+begin_src emacs-lisp :results silent
@@ -104,10 +114,39 @@ Highlight matching parenthesis
     '(define-key org-mode-map (kbd "M-<tab>") nil)) ;;Unset org-mode map "org-force-cycle-archived"
 (global-set-key (kbd "M-<tab>") 'persp-next)
 (global-set-key (kbd "M-`") 'persp-prev)
-(global-set-key (kbd "M-n") 'persp-switch-quick)
-(global-set-key (kbd "M-N") 'persp-switch)
+(global-set-key (kbd "M-n") 'persp-switch)
 #+end_src
 
+** Active Window Background
+#+begin_src emacs-lisp :results silent
+  (defun highlight-selected-window ()
+      ;Walk through all buffers, set all other buffers to
+	  ;default background
+      (walk-windows (lambda (w)
+	  (with-current-buffer (window-buffer w)
+	      (unless (eq w (selected-window))
+		  (progn
+		      (buffer-face-set 'default)
+		      ;(face-remap-remove-relative fringeface)
+                  )
+	      )
+	  )
+      ))
+      ;Finally, set current buffer background
+      (buffer-face-set '(:background "PaleTurquoise1"))
+      (if (active-minibuffer-window)
+	  (progn
+	      (buffer-face-set '(:background "PaleTurquoise1"))
+	      ;(set (make-local-variable 'fringeface) (face-remap-add-relative 'fringe :background "PaleTurquoise1"))
+	  )
+	  (progn
+	     (buffer-face-set '(:background "LightYellow"))
+	     ;(set (make-local-variable 'fringeface) (face-remap-add-relative 'fringe :background "LightYellow"))
+	  )
+      )
+  )
+  (add-hook 'buffer-list-update-hook 'highlight-selected-window)
+#+end_src
 ** General Keymaps
  Window splitting:
  #+begin_src emacs-lisp :results silent
@@ -212,6 +251,14 @@ Ivy for projectile:
 #+begin_src projectile
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
 #+end_src projectile
+** HI Window
+Would like to use this mode but the numbers aren't colored.
+#+begin_src emacs-lisp :results silent
+;(package-unless-install 'hiwin)
+;(require 'hiwin)
+;(hiwin-activate)
+;(set-face-background 'hiwin-face "gray80")
+#+end_src
 * Major modes
 ** Ansi-Term
 #+begin_src emacs-lisp :results silent

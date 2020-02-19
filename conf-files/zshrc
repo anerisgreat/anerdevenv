@@ -7,7 +7,7 @@ DISABLE_AUTO_TITLE="true"
 #Path to FZF
 export FZF_BASE=~/.fzf
 
-plugins=(git-prompt vi-mode colored-man-pages fzf zsh-syntax-highlighting)
+plugins=(git-prompt colored-man-pages fzf zsh-syntax-highlighting)
 
 #Load up ZSH
 source $ZSH/oh-my-zsh.sh
@@ -25,7 +25,7 @@ bindkey '^e' edit-command-line
 
 #Setting PS1
 PS1=$'%{\e[0m%}%{\e[0;34m%}%n%{\e[0m%}%{\e[0m%} '\
-$'%{\e[0;35m%}%~%{\e[0m%} $(git_super_status) $(vi_mode_prompt_info)\r\n%{\e[1;31m%}%B%#%b%{\e[0m%} '
+$'%{\e[0;35m%}%~%{\e[0m%} $(git_super_status) \r\n%{\e[1;31m%}%B%#%b%{\e[0m%} '
 
 #Cancel right prompt
 RPROMPT=""
