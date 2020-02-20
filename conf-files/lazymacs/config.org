@@ -69,7 +69,6 @@ Setting font size to 10. The value to place is font-size * 10
 (when (version<= "26.0.50" emacs-version )
   (global-display-line-numbers-mode))
 #+end_src
-*** Whitespace
 *** Line highlight
 #+begin_src emacs-lisp :results silent
 (global-hl-line-mode)
@@ -84,9 +83,11 @@ Highlight matching parenthesis
 (show-paren-mode 1)
  #+end_src
 *** Tabs
-Settings tabs with Smart Tabs
  #+begin_src emacs-lisp :results silent
-
+    (setq-default indent-tabs-mode nil)
+    (setq default-tab-width 4)
+ #+end_src
+ #+begin_src emacs-lisp :results silent
  #+end_src
 ** Modeline
 #+begin_src emacs-lisp :results silent
@@ -103,9 +104,9 @@ Settings tabs with Smart Tabs
 #+end_src
 ** Perspective
 #+begin_src emacs-lisp :results silent
-(package-unless-install 'perspective)
-(require 'perspective)
-(persp-mode)
+  (package-unless-install 'perspective)
+  (require 'perspective)
+  (persp-mode 1)
 #+end_src
 
 *** Keymaps
@@ -121,28 +122,23 @@ Settings tabs with Smart Tabs
 #+begin_src emacs-lisp :results silent
   (defun highlight-selected-window ()
       ;Walk through all buffers, set all other buffers to
-	  ;default background
+      ;default background
       (walk-windows (lambda (w)
-	  (with-current-buffer (window-buffer w)
-	      (unless (eq w (selected-window))
-		  (progn
-		      (buffer-face-set 'default)
-		      ;(face-remap-remove-relative fringeface)
+      (with-current-buffer (window-buffer w)
+          (unless (eq w (selected-window))
+          (progn
+              (buffer-face-set 'default)
+              ;(face-remap-remove-relative fringeface)
                   )
-	      )
-	  )
+          )
+      )
       ))
       ;Finally, set current buffer background
       (buffer-face-set '(:background "PaleTurquoise1"))
-      (if (active-minibuffer-window)
-	  (progn
-	      (buffer-face-set '(:background "PaleTurquoise1"))
-	      ;(set (make-local-variable 'fringeface) (face-remap-add-relative 'fringe :background "PaleTurquoise1"))
-	  )
-	  (progn
-	     (buffer-face-set '(:background "LightYellow"))
-	     ;(set (make-local-variable 'fringeface) (face-remap-add-relative 'fringe :background "LightYellow"))
-	  )
+      ;(if (active-minibuffer-window)
+      (if (minibuffer-window-active-p (selected-window))
+          (buffer-face-set '(:background "PaleTurquoise1"))
+          (buffer-face-set '(:background "LightYellow"))
       )
   )
   (add-hook 'buffer-list-update-hook 'highlight-selected-window)
@@ -315,7 +311,6 @@ Define languages to use
 (add-to-list 'org-src-lang-modes (quote ("dot". graphviz-dot)))
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 (add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
-
 #+end_src
 
 Code blocks
@@ -338,3 +333,9 @@ were used in the appropriate major mode.
 #+begin_src emacs-lisp :results silent
   (package-unless-install 'latex-preview-pane)
 #+end_src
+** Markdown
+#+begin_src emacs-lisp :results silent
+(package-unless-install 'markdown-mode)
+(require 'markdown-mode)
+#+end_src
+
