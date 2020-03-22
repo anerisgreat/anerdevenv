@@ -5,8 +5,7 @@
 ** Package installation
 Installation of all required packages.
 
-Taken from: https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation
-
+Taken from: https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation 
 Declare repositories:
 
 #+begin_src emacs-lisp :results silent
@@ -33,9 +32,17 @@ Defining a function to install a package unless already installed
   (unless (package-installed-p pkg)
     (package-install pkg)))
 #+end_src
-** No backup files
+** Backup files
+Taken from here:
+https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
+
 #+begin_src emacs-lisp :results silent
-  (setq make-backup-files nil)
+  (setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
+  (setq backup-by-copying t)
+  (setq delete-old-versions t
+    kept-new-versions 6
+    kept-old-versions 2
+    version-control t)
 #+end_src
 * UI
 ** Clean UI
@@ -143,6 +150,10 @@ Highlight matching parenthesis
   )
   (add-hook 'buffer-list-update-hook 'highlight-selected-window)
 #+end_src
+** Easy Prompt
+#+begin_src emacs-lisp :results silent
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
 ** General Keymaps
  Window splitting:
  #+begin_src emacs-lisp :results silent
@@ -211,15 +222,16 @@ Highlight matching parenthesis
 Enabling IVY. Taken from their website https://github.com/abo-abo/swiper
 
 #+begin_src emacs-lisp :results silent
-(package-unless-install 'ivy)
-(require 'ivy)
-(package-unless-install 'ivy-hydra)
-(require 'ivy-hydra)
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-(setq ivy-count-format "(%d/%d) ")
+  (package-unless-install 'ivy)
+  (require 'ivy)
+  (package-unless-install 'ivy-hydra)
+  (require 'ivy-hydra)
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-count-format "(%d/%d) ")
 #+end_src
+
 
 *** Keymaps
 #+begin_src emacs-lisp :results silent
@@ -230,31 +242,32 @@ Enabling IVY. Taken from their website https://github.com/abo-abo/swiper
 ** Projectile
 Package installation
 #+begin_src emacs-lisp :results silent
-(package-unless-install 'projectile)
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "M-p a") 'projectile-add-known-project)
+  (package-unless-install 'projectile)
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "M-p a") 'projectile-add-known-project)
 #+end_src
 
 Ivy for projectile:
 #+begin_src emacs-lisp :results silent
-(package-unless-install 'counsel-projectile)
-(require 'counsel-projectile)
-(counsel-projectile-mode +1)
+  (package-unless-install 'counsel-projectile)
+  (require 'counsel-projectile)
+  (counsel-projectile-mode +1)
 #+end_src
 
+Fixing counsel to display keymaps during M-x
+Taken from
+- https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion
+- https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows
+#+begin_src emacs-lisp :results silent
+  (when (commandp 'counsel-M-x)
+        (global-set-key [remap execute-extended-command] 'counsel-M-x))
+  (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
+#+end_src
 *** Keymaps
 #+begin_src projectile
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
 #+end_src projectile
-** HI Window
-Would like to use this mode but the numbers aren't colored.
-#+begin_src emacs-lisp :results silent
-;(package-unless-install 'hiwin)
-;(require 'hiwin)
-;(hiwin-activate)
-;(set-face-background 'hiwin-face "gray80")
-#+end_src
 * Major modes
 ** Ansi-Term
 #+begin_src emacs-lisp :results silent
