@@ -72,7 +72,7 @@ Setting font size to 10. The value to place is font-size * 10
 #+end_src
 *** Line numbering
 #+begin_src emacs-lisp :results silent
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 'visual)
 (setq display-line-numbers-grow-only 1)
 (setq display-line-numbers-width-start 1)
 (when (version<= "26.0.50" emacs-version )
