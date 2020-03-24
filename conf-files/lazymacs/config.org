@@ -37,12 +37,12 @@ Taken from here:
 https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
 
 #+begin_src emacs-lisp :results silent
-  (setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
-  (setq backup-by-copying t)
-  (setq delete-old-versions t
-    kept-new-versions 6
-    kept-old-versions 2
-    version-control t)
+(setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
 #+end_src
 * UI
 ** Clean UI
@@ -141,13 +141,13 @@ Highlight matching parenthesis
     ))
     ;Finally, set current buffer background
     (buffer-face-set '(:background "PaleTurquoise1"))
-    ;(if (active-minibuffer-window)
     (if (minibuffer-window-active-p (selected-window))
         (buffer-face-set '(:background "PaleTurquoise1"))
         (buffer-face-set '(:background "LightYellow"))
     )
 )
-(add-hook 'buffer-list-update-hook 'highlight-selected-window)
+;(add-hook 'buffer-list-update-hook 'highlight-selected-window)
+(add-hook 'post-command-hook 'highlight-selected-window)
 #+end_src
 ** Easy Prompt
 #+begin_src emacs-lisp :results silent
