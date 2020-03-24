@@ -72,9 +72,11 @@ Setting font size to 10. The value to place is font-size * 10
 #+end_src
 *** Line numbering
 #+begin_src emacs-lisp :results silent
-(setq display-line-numbers-type 'relative)
-(when (version<= "26.0.50" emacs-version )
-  (global-display-line-numbers-mode))
+  (setq display-line-numbers-type 'relative)
+  (setq display-line-numbers-grow-only 1)
+  (setq display-line-numbers-width-start 1)
+  (when (version<= "26.0.50" emacs-version )
+    (global-display-line-numbers-mode))
 #+end_src
 *** Line highlight
 #+begin_src emacs-lisp :results silent
@@ -261,7 +263,7 @@ Taken from
 - https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows
 #+begin_src emacs-lisp :results silent
   (when (commandp 'counsel-M-x)
-        (global-set-key [remap execute-extended-command] 'counsel-M-x))
+      (global-set-key [remap execute-extended-command] 'counsel-M-x))
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
 #+end_src
 *** Keymaps
@@ -269,9 +271,9 @@ Taken from
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
 #+end_src projectile
 * Major modes
-** Ansi-Term
+** Multi-Term
 #+begin_src emacs-lisp :results silent
-(setq display-line-numbers-type 'relative)
+  (require 'multi-term)
 #+end_src
 ** PDF-Tools
 For viewing PDF files and such! YAY
@@ -346,6 +348,12 @@ were used in the appropriate major mode.
 #+begin_src emacs-lisp :results silent
   (package-unless-install 'latex-preview-pane)
 #+end_src
+*** Useful to remember
+To preview latex fragment as image embedded in text
+#+begin_example
+org-toggle-latex-fragment
+#+end_example
+
 ** Markdown
 #+begin_src emacs-lisp :results silent
 (package-unless-install 'markdown-mode)
