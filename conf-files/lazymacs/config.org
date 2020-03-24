@@ -1,24 +1,23 @@
 #+TITLE: Aner's Emacs Configuration
-#+OPTIONS: H:10
+#+options: H:10
+#+PROPERTY: header-args    :results silent
+Installation of all required packages.
 
 * Base Configuration
 ** Package installation
-Installation of all required packages.
-
 Taken from: https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation 
 Declare repositories:
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")))
 #+end_src
 
 Initialize package management and refresh repositories unless archived.
-
 If repositories need to be refreshed, this command should be called.
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (require 'package)
 (package-initialize)
 
@@ -27,7 +26,7 @@ If repositories need to be refreshed, this command should be called.
 #+end_src
 
 Defining a function to install a package unless already installed
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (defun package-unless-install(pkg)
   (unless (package-installed-p pkg)
     (package-install pkg)))
@@ -36,18 +35,18 @@ Defining a function to install a package unless already installed
 Taken from here:
 https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
 (setq backup-by-copying t)
 (setq delete-old-versions t
   kept-new-versions 6
   kept-old-versions 2
-  version-control t)
+   version-control t)
 #+end_src
 * UI
 ** Clean UI
 Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (customize-set-variable 'inhibit-startup-screen t) ; no splash screen on start
 (tool-bar-mode -1)   ; no tool bar with icons
 (scroll-bar-mode -1) ; no scroll bars
@@ -55,7 +54,7 @@ Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 #+end_src
 ** Window dividers
 Customizing space between windows
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (window-divider-mode 0)
 (set-face-foreground 'vertical-border "LightGray")
 (set-face-background 'fringe "WhiteSmoke")
@@ -67,11 +66,11 @@ Customizing space between windows
 *** Text format
 Setting font size to 10. The value to place is font-size * 10
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (set-face-attribute 'default nil :height 100)
 #+end_src
 *** Line numbering
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq display-line-numbers-type 'visual)
 (setq display-line-numbers-grow-only 1)
 (setq display-line-numbers-width-start 1)
@@ -79,44 +78,44 @@ Setting font size to 10. The value to place is font-size * 10
 (global-display-line-numbers-mode))
 #+end_src
 *** Line highlight
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (global-hl-line-mode)
 #+end_src
 *** Line wrap
- #+begin_src emacs-lisp :results silent
+ #+begin_src emacs-lisp
 (global-visual-line-mode t)
  #+end_src
 *** Parenthesis
 Highlight matching parenthesis
- #+begin_src emacs-lisp :results silent
+ #+begin_src emacs-lisp
 (show-paren-mode 1)
  #+end_src
 *** Tabs
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
 #+end_src
 ** Modeline
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 ;(package-unless-install 'smart-mode-line)
 ;(setq sml/no-confirm-load-theme t)
 ;(sml/setup)
 ;(setq sml/theme 'light)
 #+end_src
 ** Which-Key
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'which-key)
 (require 'which-key)
 (which-key-mode)
 #+end_src
 ** Perspective
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'perspective)
 (require 'perspective)
 (persp-mode 1)
 #+end_src
 *** Keymaps
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (eval-after-load "org"
     '(define-key org-mode-map (kbd "M-<tab>") nil)) ;;Unset org-mode map "org-force-cycle-archived"
 (global-set-key (kbd "M-<tab>") 'persp-next)
@@ -125,7 +124,7 @@ Highlight matching parenthesis
 #+end_src
 
 ** Active Window Background
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (defun highlight-selected-window ()
     ;Walk through all buffers, set all other buffers to
     ;default background
@@ -150,12 +149,12 @@ Highlight matching parenthesis
 (add-hook 'post-command-hook 'highlight-selected-window)
 #+end_src
 ** Easy Prompt
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
 ** General Keymaps
  Window splitting:
- #+begin_src emacs-lisp :results silent
+ #+begin_src emacs-lisp
 ;;Instead of delete-horizontal-space
 (global-set-key (kbd "M-\\") 'split-window-horizontally)
 ;;Instead of negative-argument
@@ -163,7 +162,7 @@ Highlight matching parenthesis
  #+end_src
 
  Window movement:
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 ;;Unset the org-mode map of "org-mark-element"
 (eval-after-load "org"
     '(define-key org-mode-map (kbd "M-h") nil)) 
@@ -200,7 +199,7 @@ Highlight matching parenthesis
 #+end_src
 
 Buffers:
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 ;(eval-after-load "evil-autoloads"
 ;    '(define-key evil-normal-state-map (kbd "C-b") nil))
 ;(eval-after-load "evil-autoloads"
@@ -211,7 +210,7 @@ Buffers:
 
 * Global modes
 ** EVIL mode
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'evil)
 (require 'evil )
 (evil-mode 1)
@@ -219,7 +218,7 @@ Buffers:
 ** IVY
 Enabling IVY. Taken from their website https://github.com/abo-abo/swiper
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'ivy)
 (require 'ivy)
 (package-unless-install 'ivy-hydra)
@@ -230,14 +229,14 @@ Enabling IVY. Taken from their website https://github.com/abo-abo/swiper
 (setq ivy-count-format "(%d/%d) ")
 #+end_src
 *** Keymaps
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
 #+end_src
 
 ** Projectile
 Package installation
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'projectile)
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
@@ -245,7 +244,7 @@ Package installation
 #+end_src
 
 Ivy for projectile:
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'counsel-projectile)
 (require 'counsel-projectile)
 (counsel-projectile-mode +1)
@@ -255,23 +254,23 @@ Fixing counsel to display keymaps during M-x
 Taken from
 - https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion
 - https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (when (commandp 'counsel-M-x)
     (global-set-key [remap execute-extended-command] 'counsel-M-x))
 (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
 #+end_src
 *** Keymaps
-#+begin_src projectile
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
 #+end_src projectile
 * Major modes
 ** Multi-Term
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (require 'multi-term)
 #+end_src
 ** PDF-Tools
 For viewing PDF files and such! YAY
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 ;(package-unless-install 'pdf-tools)
 ;(require 'pdf-tools)
 ;(pdf-tools-install)
@@ -280,7 +279,7 @@ For viewing PDF files and such! YAY
 Taken from https://github.com/munen/emacs.d/blob/master/configuration.org
 When using evil-mode and pdf-tools and looking at a zoomed PDF, it will blink, because the cursor blinks.
 This configuration disables this whilst retaining the blinking cursor in other modes.
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (evil-set-initial-state 'pdf-view-mode 'emacs)
 (add-hook 'pdf-view-mode-hook
   (lambda ()
@@ -291,7 +290,7 @@ This configuration disables this whilst retaining the blinking cursor in other m
 Adding fold symbols for source code based on
 https://mstempl.netlify.com/post/beautify-org-mode/
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq-default prettify-symbols-alist '(("#+begin_src" . "▶")
                                        ("#+call:" . "▷")
                                        ("#+end_src" . "▴"))) ; ⦖ ◀ ◆ ◉
@@ -301,7 +300,7 @@ https://mstempl.netlify.com/post/beautify-org-mode/
 *** Babel
 Define languages to use 
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (require 'ob)
 (require 'ob-tangle)
 
@@ -327,20 +326,20 @@ The following displays the contents of code blocks in Org-mode files using
 the major-mode of the code. It also changes the behavior of TAB to as if it
 were used in the appropriate major mode.
 
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
 (setq org-src-preserve-indentation 1)
 #+end_src
 *** HTML Preview
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'org-preview-html)
 (package-unless-install 'htmlize)
 (require 'org-preview-html)
 (require 'htmlize)
 #+end_src
 *** PDF Preview
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'latex-preview-pane)
 #+end_src
 *** Useful to remember
@@ -350,7 +349,7 @@ org-toggle-latex-fragment
 #+end_example
 
 ** Markdown
-#+begin_src emacs-lisp :results silent
+#+begin_src emacs-lisp
 (package-unless-install 'markdown-mode)
 (require 'markdown-mode)
 #+end_src
