@@ -1,14 +1,28 @@
 #+TITLE: Aner's Emacs Configuration
 #+options: H:10
-#+PROPERTY: header-args    :results silent
+#+property: header-args :results silent
+#+header: :noweb-ref example.org
+#+begin_export latex
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\setminted{
+  bgcolor=codebg,
+  breaklines=true,
+  mathescape,
+  linenos=false,
+  numbersep=2,
+  fontsize=\scriptsize
+}
+#+end_export
+
 Installation of all required packages.
+
 
 * Base Configuration
 ** Package installation
-Taken from: https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation 
+Taken from [[https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation ][this post on StackOverflow]].
 Declare repositories:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :latex_attr optoins bgcolor=dark
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")))
@@ -32,8 +46,7 @@ Defining a function to install a package unless already installed
     (package-install pkg)))
 #+end_src
 ** Backup files
-Taken from here:
-https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
+Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files][this post on StackOverflow]]
 
 #+begin_src emacs-lisp
 (setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
@@ -216,7 +229,7 @@ Buffers:
 (evil-mode 1)
 #+end_src
 ** IVY
-Enabling IVY. Taken from their website https://github.com/abo-abo/swiper
+Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 
 #+begin_src emacs-lisp
 (package-unless-install 'ivy)
@@ -251,18 +264,20 @@ Ivy for projectile:
 #+end_src
 
 Fixing counsel to display keymaps during M-x
-Taken from
-- https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion
-- https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows
+Taken from [[https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion][this post]] and [[https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows][this post]] from StackOverflow.
+
 #+begin_src emacs-lisp
 (when (commandp 'counsel-M-x)
     (global-set-key [remap execute-extended-command] 'counsel-M-x))
 (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
 #+end_src
+
 *** Keymaps
+
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
-#+end_src projectile
+#+end_src
+
 * Major modes
 ** Multi-Term
 #+begin_src emacs-lisp
@@ -276,7 +291,7 @@ For viewing PDF files and such! YAY
 ;(pdf-tools-install)
 #+end_src
 *** Stop the blinking
-Taken from https://github.com/munen/emacs.d/blob/master/configuration.org
+Taken from [[https://github.com/munen/emacs.d/blob/master/configuration.org][Munen's configuration on GitHub]].
 When using evil-mode and pdf-tools and looking at a zoomed PDF, it will blink, because the cursor blinks.
 This configuration disables this whilst retaining the blinking cursor in other modes.
 #+begin_src emacs-lisp
@@ -287,16 +302,6 @@ This configuration disables this whilst retaining the blinking cursor in other m
 #+end_src
 ** ORG
 *** General
-Adding fold symbols for source code based on
-https://mstempl.netlify.com/post/beautify-org-mode/
-
-#+begin_src emacs-lisp
-(setq-default prettify-symbols-alist '(("#+begin_src" . "▶")
-                                       ("#+call:" . "▷")
-                                       ("#+end_src" . "▴"))) ; ⦖ ◀ ◆ ◉
-(setq prettify-symbols-unprettify-at-point 'right-edge)
-(add-hook 'org-mode-hook 'prettify-symbols-mode)
-#+end_src
 *** Babel
 Define languages to use 
 
@@ -341,6 +346,14 @@ were used in the appropriate major mode.
 *** PDF Preview
 #+begin_src emacs-lisp
 (package-unless-install 'latex-preview-pane)
+#+end_src
+*** Minted
+#+begin_src emacs-lisp
+(setq org-latex-listings 'minted
+      org-latex-packages-alist '(("" "minted" "xcolor"))
+      org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
 *** Useful to remember
 To preview latex fragment as image embedded in text
