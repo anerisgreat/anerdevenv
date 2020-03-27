@@ -1,7 +1,5 @@
-#+TITLE: Aner's Emacs Configuration
-#+options: H:10
+#+Title: Aner's Emacs Configuration
 #+property: header-args :results silent
-#+header: :noweb-ref example.org
 #+begin_export latex
 \definecolor{codebg}{rgb}{0.95,0.95,0.95}
 \setminted{
@@ -14,12 +12,14 @@
 }
 #+end_export
 
+* Base Configuration
+
+** Package installation
+
 Installation of all required packages.
 
-
-* Base Configuration
-** Package installation
 Taken from [[https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation ][this post on StackOverflow]].
+
 Declare repositories:
 
 #+begin_src emacs-lisp :latex_attr optoins bgcolor=dark
@@ -45,7 +45,9 @@ Defining a function to install a package unless already installed
   (unless (package-installed-p pkg)
     (package-install pkg)))
 #+end_src
+
 ** Backup files
+
 Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files][this post on StackOverflow]]
 
 #+begin_src emacs-lisp
@@ -56,7 +58,9 @@ Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-ema
   kept-old-versions 2
    version-control t)
 #+end_src
+
 * UI
+
 ** Clean UI
 Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 #+begin_src emacs-lisp
@@ -65,6 +69,7 @@ Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 (scroll-bar-mode -1) ; no scroll bars
 (menu-bar-mode -1)   ; no menu bar
 #+end_src
+
 ** Window dividers
 Customizing space between windows
 #+begin_src emacs-lisp
@@ -75,13 +80,16 @@ Customizing space between windows
 ;(set-face-foreground 'vertical-border (face-attribute 'mode-line :background))
 ;(set-face-background 'fringe (face-attribute 'mode-line-inactive :background))
 #+end_src
+
 ** Text
+
 *** Text format
 Setting font size to 10. The value to place is font-size * 10
 
 #+begin_src emacs-lisp
 (set-face-attribute 'default nil :height 100)
 #+end_src
+
 *** Line numbering
 #+begin_src emacs-lisp
 (setq display-line-numbers-type 'visual)
@@ -90,53 +98,67 @@ Setting font size to 10. The value to place is font-size * 10
 (when (version<= "26.0.50" emacs-version )
 (global-display-line-numbers-mode))
 #+end_src
+
 *** Line highlight
 #+begin_src emacs-lisp
 (global-hl-line-mode)
 #+end_src
+
 *** Line wrap
  #+begin_src emacs-lisp
 (global-visual-line-mode t)
  #+end_src
+
 *** Parenthesis
 Highlight matching parenthesis
  #+begin_src emacs-lisp
 (show-paren-mode 1)
  #+end_src
+
 *** Tabs
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
 #+end_src
+
 ** Modeline
+
 #+begin_src emacs-lisp
 ;(package-unless-install 'smart-mode-line)
 ;(setq sml/no-confirm-load-theme t)
 ;(sml/setup)
 ;(setq sml/theme 'light)
 #+end_src
+
 ** Which-Key
+
 #+begin_src emacs-lisp
 (package-unless-install 'which-key)
 (require 'which-key)
 (which-key-mode)
 #+end_src
+
 ** Perspective
+
 #+begin_src emacs-lisp
 (package-unless-install 'perspective)
 (require 'perspective)
 (persp-mode 1)
 #+end_src
+
 *** Keymaps
+
 #+begin_src emacs-lisp
 (eval-after-load "org"
-    '(define-key org-mode-map (kbd "M-<tab>") nil)) ;;Unset org-mode map "org-force-cycle-archived"
+    '(define-key org-mode-map (kbd "M-<tab>") nil))
+;Unset org-mode map "org-force-cycle-archived"
 (global-set-key (kbd "M-<tab>") 'persp-next)
 (global-set-key (kbd "M-`") 'persp-prev)
 (global-set-key (kbd "M-n") 'persp-switch)
 #+end_src
 
 ** Active Window Background
+
 #+begin_src emacs-lisp
 (defun highlight-selected-window ()
     ;Walk through all buffers, set all other buffers to
@@ -161,11 +183,15 @@ Highlight matching parenthesis
 ;(add-hook 'buffer-list-update-hook 'highlight-selected-window)
 (add-hook 'post-command-hook 'highlight-selected-window)
 #+end_src
+
 ** Easy Prompt
+
 #+begin_src emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
+
 ** General Keymaps
+
  Window splitting:
  #+begin_src emacs-lisp
 ;;Instead of delete-horizontal-space
@@ -222,13 +248,17 @@ Buffers:
 #+end_src
 
 * Global modes
+  
 ** EVIL mode
+
 #+begin_src emacs-lisp
 (package-unless-install 'evil)
 (require 'evil )
 (evil-mode 1)
 #+end_src
+
 ** IVY
+
 Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 
 #+begin_src emacs-lisp
@@ -241,13 +271,16 @@ Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 (setq enable-recursive-minibuffers t)
 (setq ivy-count-format "(%d/%d) ")
 #+end_src
+
 *** Keymaps
+
 #+begin_src emacs-lisp
 (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
 #+end_src
 
 ** Projectile
+
 Package installation
 #+begin_src emacs-lisp
 (package-unless-install 'projectile)
@@ -279,18 +312,24 @@ Taken from [[https://emacs.stackexchange.com/questions/40787/display-correspondi
 #+end_src
 
 * Major modes
+
 ** Multi-Term
+
 #+begin_src emacs-lisp
 (require 'multi-term)
 #+end_src
+
 ** PDF-Tools
+
 For viewing PDF files and such! YAY
 #+begin_src emacs-lisp
 ;(package-unless-install 'pdf-tools)
 ;(require 'pdf-tools)
 ;(pdf-tools-install)
 #+end_src
+
 *** Stop the blinking
+
 Taken from [[https://github.com/munen/emacs.d/blob/master/configuration.org][Munen's configuration on GitHub]].
 When using evil-mode and pdf-tools and looking at a zoomed PDF, it will blink, because the cursor blinks.
 This configuration disables this whilst retaining the blinking cursor in other modes.
@@ -300,9 +339,12 @@ This configuration disables this whilst retaining the blinking cursor in other m
   (lambda ()
     (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
 #+end_src
+
 ** ORG
+   
 *** General
 *** Babel
+
 Define languages to use 
 
 #+begin_src emacs-lisp
@@ -327,6 +369,7 @@ Define languages to use
 #+end_src
 
 *** Code blocks
+
 The following displays the contents of code blocks in Org-mode files using
 the major-mode of the code. It also changes the behavior of TAB to as if it
 were used in the appropriate major mode.
@@ -336,18 +379,24 @@ were used in the appropriate major mode.
 (setq org-src-tab-acts-natively t)
 (setq org-src-preserve-indentation 1)
 #+end_src
+
 *** HTML Preview
+
 #+begin_src emacs-lisp
 (package-unless-install 'org-preview-html)
 (package-unless-install 'htmlize)
 (require 'org-preview-html)
 (require 'htmlize)
 #+end_src
+
 *** PDF Preview
+
 #+begin_src emacs-lisp
 (package-unless-install 'latex-preview-pane)
 #+end_src
+
 *** Minted
+
 #+begin_src emacs-lisp
 (setq org-latex-listings 'minted
       org-latex-packages-alist '(("" "minted" "xcolor"))
@@ -355,13 +404,22 @@ were used in the appropriate major mode.
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
+
+*** Face background
+#+begin_src emacs-lisp
+(set-face-background 'org-block-begin-line "gray")
+(set-face-background 'org-block "white")
+(set-face-background 'org-block-end-line "gray")
+#+end_src
 *** Useful to remember
+
 To preview latex fragment as image embedded in text
 #+begin_example
 org-toggle-latex-fragment
 #+end_example
 
 ** Markdown
+
 #+begin_src emacs-lisp
 (package-unless-install 'markdown-mode)
 (require 'markdown-mode)
