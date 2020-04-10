@@ -1,5 +1,10 @@
 #+Title: Aner's Emacs Configuration
 #+property: header-args :results silent
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{polyglossia}
+#+LATEX_HEADER: \setotherlanguage{hebrew}
+#+LATEX_HEADER: \newfontfamily\hebrewfont{Noto Sans Hebrew}[Script=Hebrew]
 #+begin_export latex
 \definecolor{codebg}{rgb}{0.95,0.95,0.95}
 \setminted{
@@ -7,12 +12,12 @@
   breaklines=true,
   mathescape,
   linenos=false,
-  numbersep=2,
   fontsize=\scriptsize
 }
 #+end_export
 
 * Base Configuration
+  
 
 ** Package installation
 
@@ -247,6 +252,16 @@ Buffers:
 ;    '(global-set-key (kbd "C-b C-d") 'kill-buffer))
 #+end_src
 
+** Centaur tabs
+
+#+begin_src emacs-lisp
+;(package-unless-install 'centaur-tabs)
+;(centaur-tabs-mode t)
+;(global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
+;(global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
+;(centaur-tabs-mode t)
+#+end_src
+
 * Global modes
   
 ** EVIL mode
@@ -303,6 +318,10 @@ Taken from [[https://emacs.stackexchange.com/questions/40787/display-correspondi
 (when (commandp 'counsel-M-x)
     (global-set-key [remap execute-extended-command] 'counsel-M-x))
 (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
+#+end_src
+
+#+begin_src emacs-lisp
+;(centaur-tabs-group-by-projectile-project)
 #+end_src
 
 *** Keymaps
@@ -396,16 +415,32 @@ were used in the appropriate major mode.
 #+end_src
 
 *** Minted
-
+    
 #+begin_src emacs-lisp
-(setq org-latex-listings 'minted
-      org-latex-packages-alist '(("" "minted" "xcolor"))
-      org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+(setq org-latex-listings 'minted)
+(setq org-latex-packages-alist '(("" "minted" "xcolor" "polyglossia")))
+(setq org-latex-pdf-process
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
 
-*** Face background
+*** Fixing previews for things with polygloss
+#+begin_src emacs-lisp
+;(setq org-preview-latex-process-alist '(())
+#+end_src
+
+This should render Hebrew text.
+
+#+begin_export latex
+\begin{hebrew}
+#+end_export
+
+זה אמור לעבוד
+
+#+begin_export latex
+\end{hebrew}
+#+end_export
+
+*** Org block highlighting
 #+begin_src emacs-lisp
 (set-face-background 'org-block-begin-line "gray")
 (set-face-background 'org-block "white")
