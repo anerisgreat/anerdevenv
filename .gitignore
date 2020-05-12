@@ -4,3 +4,9 @@
 *.swo
 *.html
 *.elc
+*.bbl
+*.tex
+*.tmp
+*.log
+*.pdf
+
