@@ -441,11 +441,19 @@ This should render Hebrew text.
 #+end_export
 
 *** Org block highlighting
+
 #+begin_src emacs-lisp
 (set-face-background 'org-block-begin-line "gray")
 (set-face-background 'org-block "white")
 (set-face-background 'org-block-end-line "gray")
 #+end_src
+
+*** Python version
+
+#+begin_src emacs-lisp
+(setq org-babel-python-command "python3")
+#+end_src
+
 *** Useful to remember
 
 To preview latex fragment as image embedded in text
