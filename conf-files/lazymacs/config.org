@@ -18,7 +18,6 @@
 
 * Base Configuration
   
-
 ** Package installation
 
 Installation of all required packages.
@@ -160,6 +159,7 @@ Highlight matching parenthesis
 (global-set-key (kbd "M-<tab>") 'persp-next)
 (global-set-key (kbd "M-`") 'persp-prev)
 (global-set-key (kbd "M-n") 'persp-switch)
+
 #+end_src
 
 ** Active Window Background
@@ -252,16 +252,6 @@ Buffers:
 ;    '(global-set-key (kbd "C-b C-d") 'kill-buffer))
 #+end_src
 
-** Centaur tabs
-
-#+begin_src emacs-lisp
-;(package-unless-install 'centaur-tabs)
-;(centaur-tabs-mode t)
-;(global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
-;(global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
-;(centaur-tabs-mode t)
-#+end_src
-
 * Global modes
   
 ** EVIL mode
@@ -309,6 +299,7 @@ Ivy for projectile:
 (package-unless-install 'counsel-projectile)
 (require 'counsel-projectile)
 (counsel-projectile-mode +1)
+(setq projectile-completion-system 'ivy)
 #+end_src
 
 Fixing counsel to display keymaps during M-x
@@ -320,8 +311,10 @@ Taken from [[https://emacs.stackexchange.com/questions/40787/display-correspondi
 (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
 #+end_src
 
+Persp projectile
+
 #+begin_src emacs-lisp
-;(centaur-tabs-group-by-projectile-project)
+(package-unless-install 'persp-projectile)
 #+end_src
 
 *** Keymaps
@@ -336,6 +329,7 @@ Taken from [[https://emacs.stackexchange.com/questions/40787/display-correspondi
 
 #+begin_src emacs-lisp
 (require 'multi-term)
+(setq multi-term-program "/usr/bin/zsh")
 #+end_src
 
 ** PDF-Tools
