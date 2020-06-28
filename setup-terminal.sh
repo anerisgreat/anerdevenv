@@ -12,7 +12,20 @@ check_if_exists "fzf --version" || \
 check_if_exists zsh || { try_install_from_package_manager zsh ; } || \
     { echo 'Installation of zsh failed' &&  exit 1; }
 
+#Must install PIP
+
 #emacs
+check_if_exists emacs || \
+    { curl https://ftp.gnu.org/gnu/emacs/emacs-26.3.tar.gz && \
+        tar -xzf emacs-26.3.tar.gz && \
+        cd emacs-26.3 && \
+        ./autogen.sh && \
+        ./configure --with-modules && \
+        make &&\
+        sudo make install ;}
+
+
+        cd
 check_if_exists emacs || { try_install_from_package_manager emacs ; } || \
     { echo 'Installation of emacs failed' &&  exit 1; }
 

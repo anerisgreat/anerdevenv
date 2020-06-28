@@ -5,6 +5,7 @@
 #+LATEX_HEADER: \usepackage{polyglossia}
 #+LATEX_HEADER: \setotherlanguage{hebrew}
 #+LATEX_HEADER: \newfontfamily\hebrewfont{Noto Sans Hebrew}[Script=Hebrew]
+#+options: toc:nil
 #+begin_export latex
 \definecolor{codebg}{rgb}{0.95,0.95,0.95}
 \setminted{
@@ -99,8 +100,23 @@ Setting font size to 10. The value to place is font-size * 10
 (setq display-line-numbers-type 'visual)
 (setq display-line-numbers-grow-only 1)
 (setq display-line-numbers-width-start 1)
-(when (version<= "26.0.50" emacs-version )
-(global-display-line-numbers-mode))
+
+;Getting rid of linum on terminal type buffers
+(require 'display-line-numbers)
+(defcustom display-line-numbers-exempt-modes '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode)
+  "Major modes on which to disable the linum mode, exempts them from global requirement"
+  :group 'display-line-numbers
+  :type 'list
+  :version "green")
+
+(defun display-line-numbers--turn-on ()
+  "turn on line numbers but excempting certain majore modes defined in `display-line-numbers-exempt-modes'"
+  (if (and
+       (not (member major-mode display-line-numbers-exempt-modes))
+       (not (minibufferp)))
+      (display-line-numbers-mode)))
+
+(global-display-line-numbers-mode)
 #+end_src
 
 *** Line highlight
@@ -122,16 +138,15 @@ Highlight matching parenthesis
 *** Tabs
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
-(setq default-tab-width 4)
+(setq-default tab-width 4)
+(setq c-basic-offset 4)
 #+end_src
 
 ** Modeline
 
 #+begin_src emacs-lisp
-;(package-unless-install 'smart-mode-line)
-;(setq sml/no-confirm-load-theme t)
-;(sml/setup)
-;(setq sml/theme 'light)
+(package-unless-install 'telephone-line)
+(telephone-line-mode 1)
 #+end_src
 
 ** Which-Key
@@ -143,11 +158,12 @@ Highlight matching parenthesis
 #+end_src
 
 ** Perspective
-
+   
 #+begin_src emacs-lisp
 (package-unless-install 'perspective)
 (require 'perspective)
 (persp-mode 1)
+(setq persp-show-modestring 'nil)
 #+end_src
 
 *** Keymaps
@@ -240,6 +256,8 @@ Highlight matching parenthesis
     (set-window-width 85))
 ;;Instead of indent-new-comment-line
 (global-set-key (kbd "M-d R") 'set-85-columns)
+;;Instead of tab-to-tab-stop
+(global-set-key (kbd "M-i") 'imenu)
 #+end_src
 
 Buffers:
@@ -315,12 +333,19 @@ Persp projectile
 
 #+begin_src emacs-lisp
 (package-unless-install 'persp-projectile)
+(define-key projectile-mode-map (kbd "M-p p") 'projectile-persp-switch-project)
 #+end_src
 
 *** Keymaps
 
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-b") 'projectile-display-buffer)
+#+end_src
+
+** Magit
+
+#+begin_src emacs-lisp
+(package-unless-install 'magit)
 #+end_src
 
 * Major modes
@@ -330,6 +355,17 @@ Persp projectile
 #+begin_src emacs-lisp
 (require 'multi-term)
 (setq multi-term-program "/usr/bin/zsh")
+
+(package-unless-install 'vterm)
+
+(eval-after-load "vterm"
+    '(progn (define-key vterm-mode-map (kbd "M-h") nil)
+        (define-key vterm-mode-map (kbd "M-j") nil)
+        (define-key vterm-mode-map (kbd "M-k") nil)
+        (define-key vterm-mode-map (kbd "M-l") nil)
+        (define-key vterm-mode-map (kbd "M-d") nil)
+    )
+)
 #+end_src
 
 ** PDF-Tools
@@ -412,7 +448,7 @@ were used in the appropriate major mode.
     
 #+begin_src emacs-lisp
 (setq org-latex-listings 'minted)
-(setq org-latex-packages-alist '(("" "minted" "xcolor" "polyglossia")))
+(setq org-latex-packages-alist '(("" "polyglossia" "minted" "xcolor")))
 (setq org-latex-pdf-process
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
@@ -448,6 +484,26 @@ This should render Hebrew text.
 (setq org-babel-python-command "python3")
 #+end_src
 
+*** Async blocks
+
+#+begin_src emacs-lisp
+(package-unless-install 'ob-async)
+(require 'ob-async)
+#+end_src
+
+*** Inline images
+
+#+begin_src emacs-lisp
+(setq org-startup-with-inline-images t)
+
+(defun shk-fix-inline-images ()
+  (when org-inline-image-overlays
+    (org-redisplay-inline-images)))
+
+(with-eval-after-load 'org
+  (add-hook 'org-babel-after-execute-hook 'shk-fix-inline-images))
+#+end_src
+
 *** Useful to remember
 
 To preview latex fragment as image embedded in text
@@ -460,5 +516,11 @@ org-toggle-latex-fragment
 #+begin_src emacs-lisp
 (package-unless-install 'markdown-mode)
 (require 'markdown-mode)
+#+end_src
+
+** CMake
+
+#+begin_src emacs-lisp
+(package-unless-install 'cmake-mode)
 #+end_src
 
