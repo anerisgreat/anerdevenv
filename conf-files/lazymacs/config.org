@@ -69,21 +69,33 @@ Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-ema
 ** Clean UI
 Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 #+begin_src emacs-lisp
+
 (customize-set-variable 'inhibit-startup-screen t) ; no splash screen on start
-(tool-bar-mode -1)   ; no tool bar with icons
-(scroll-bar-mode -1) ; no scroll bars
 (menu-bar-mode -1)   ; no menu bar
+(when (display-graphic-p)
+    (tool-bar-mode -1)   ; no tool bar with icons
+    (scroll-bar-mode -1) ; no scroll bars
+    (set-fringe-mode 0)
+)
 #+end_src
 
 ** Window dividers
-Customizing space between windows
+#+end_src
+
+** Theme
+
 #+begin_src emacs-lisp
-(window-divider-mode 0)
-(set-face-foreground 'vertical-border "LightGray")
-(set-face-background 'fringe "WhiteSmoke")
-;For theme-independent configuration
-;(set-face-foreground 'vertical-border (face-attribute 'mode-line :background))
-;(set-face-background 'fringe (face-attribute 'mode-line-inactive :background))
+(package-unless-install 'solarized-theme)
+(load-theme 'solarized-light t)
+
+(setq solarized-use-variable-pitch nil)
+(setq solarized-scale-org-headlines nil)
+
+(setq solarized-height-minus-1 1.0)
+(setq solarized-height-plus-1 1.0)
+(setq solarized-height-plus-2 1.0)
+(setq solarized-height-plus-3 1.0)
+(setq solarized-height-plus-4 1.0)
 #+end_src
 
 ** Text
@@ -145,8 +157,12 @@ Highlight matching parenthesis
 ** Modeline
 
 #+begin_src emacs-lisp
-(package-unless-install 'telephone-line)
-(telephone-line-mode 1)
+(when (display-graphic-p)
+    (package-unless-install 'mini-modeline)
+    (mini-modeline-mode t)
+)
+(package-unless-install 'smart-mode-line)
+(sml/setup)
 #+end_src
 
 ** Which-Key
@@ -203,7 +219,7 @@ Highlight matching parenthesis
     )
 )
 ;(add-hook 'buffer-list-update-hook 'highlight-selected-window)
-(add-hook 'post-command-hook 'highlight-selected-window)
+;(add-hook 'post-command-hook 'highlight-selected-window)
 #+end_src
 
 ** Easy Prompt
@@ -230,7 +246,6 @@ Highlight matching parenthesis
 
 ;;Instead of mark-paragraph (and org mark element)
 (global-set-key (kbd "M-h") 'windmove-left)
-
 ;;Instead of downcase-word
 (global-set-key (kbd "M-l") 'windmove-right) 
 ;;Instead of kill-sentence
@@ -240,7 +255,7 @@ Highlight matching parenthesis
 ;;Instead of mark-paragraph
 (global-set-key (kbd "M-<left>") 'windmove-left)
 ;;Instead of downcase-word
-(global-set-key (kbd "M-<rijjt>") 'windmove-right)
+(global-set-key (kbd "M-<right>") 'windmove-right)
 ;;Instead of kill-sentence
 (global-set-key (kbd "M-<up>") 'windmove-up)
 ;;Instead of indent-new-comment-line
@@ -259,7 +274,8 @@ Highlight matching parenthesis
 ;;Instead of indent-new-comment-line
 (global-set-key (kbd "M-d R") 'set-85-columns)
 ;;Instead of tab-to-tab-stop
-(global-set-key (kbd "M-i") 'imenu)
+(global-set-key (kbd "M-i") 'counsel-imenu)
+(global-set-key (kbd "M-b") 'counsel-switch-buffer)
 #+end_src
 
 Buffers:
@@ -273,6 +289,12 @@ Buffers:
 #+end_src
 
 * EXWM
+
+We execute the following code only if started with EXWM argument
+#+begin_src emacs-lisp
+(defun anerenv-load-exwm(switch)
+(progn
+#+end_src
 
 #+begin_src emacs-lisp
 (package-unless-install 'exwm)
@@ -298,6 +320,7 @@ Emacs server is not required to run EXWM but it has some interesting uses
 #+begin_src emacs-lisp
 (server-start)
 #+end_src
+
 
 Load EXWM.
 #+begin_src emacs-lisp
@@ -411,6 +434,14 @@ ready.  You can put it _anywhere_ in your configuration.
 (require 'exwm-systemtray)
 (exwm-systemtray-enable)
 #+end_src
+
+End the execute only if EXWM block.
+Close parens, then add to command switch.
+#+begin_src emacs-lisp
+))
+
+(add-to-list 'command-switch-alist '("--start-exwm" . anerenv-load-exwm))
+#+end_src
 * Global modes
   
 ** EVIL mode
@@ -422,7 +453,7 @@ ready.  You can put it _anywhere_ in your configuration.
 #+end_src
 
 ** IVY
-
+   
 Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 
 #+begin_src emacs-lisp
@@ -439,6 +470,12 @@ Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 *** Keymaps
 
 #+begin_src emacs-lisp
+;Rebinding for switching buffer C-d to kill instead of C-k because of conflict
+(define-key visual-line-mode-map (kbd "C-k") nil)
+(define-key ivy-switch-buffer-map (kbd "C-k") nil)
+
+(define-key ivy-switch-buffer-map (kbd "C-d") 'ivy-switch-buffer-kill)
+
 (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
 #+end_src
@@ -494,6 +531,7 @@ Persp projectile
 #+begin_src emacs-lisp
 (setq tramp-verbose 6)
 #+end_src
+
 * Major modes
 
 ** Multi-Term
@@ -616,9 +654,11 @@ This should render Hebrew text.
 *** Org block highlighting
 
 #+begin_src emacs-lisp
-(set-face-background 'org-block-begin-line "gray")
-(set-face-background 'org-block "white")
-(set-face-background 'org-block-end-line "gray")
+;Set for solarized theme
+(set-face-background 'org-block-begin-line "#FFF3D6")
+(set-face-background 'org-block-end-line "#FFF3D6")
+(set-face-background 'org-block (face-attribute 'default :background))
+(package-unless-install 'color)
 #+end_src
 
 *** Python version
@@ -634,6 +674,13 @@ This should render Hebrew text.
 (require 'ob-async)
 #+end_src
 
+Do this to set ASYNC python command
+#+begin_src emacs-lisp
+(add-hook 'ob-async-pre-execute-src-block-hook
+        '(lambda ()
+           (setq org-babel-python-command "python3")
+))
+#+end_src
 *** Inline images
 
 #+begin_src emacs-lisp
