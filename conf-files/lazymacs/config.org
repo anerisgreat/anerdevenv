@@ -3,8 +3,7 @@
 #+LATEX_HEADER: \usepackage{xcolor}
 #+LATEX_HEADER: \usepackage{minted}
 #+LATEX_HEADER: \usepackage{polyglossia}
-#+LATEX_HEADER: \setotherlanguage{hebrew}
-#+LATEX_HEADER: \newfontfamily\hebrewfont{Noto Sans Hebrew}[Script=Hebrew]
+#+LATEX_HEADER: \setotherlanguage{hebrew} #+LATEX_HEADER: \newfontfamily\hebrewfont{Noto Sans Hebrew}[Script=Hebrew]
 #+options: toc:nil
 #+begin_export latex
 \definecolor{codebg}{rgb}{0.95,0.95,0.95}
@@ -18,7 +17,7 @@
 #+end_export
 
 * Base Configuration
-  
+
 ** Package installation
 
 Installation of all required packages.
@@ -64,384 +63,6 @@ Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-ema
    version-control t)
 #+end_src
 
-* UI
-
-** Clean UI
-Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
-#+begin_src emacs-lisp
-
-(customize-set-variable 'inhibit-startup-screen t) ; no splash screen on start
-(menu-bar-mode -1)   ; no menu bar
-(when (display-graphic-p)
-    (tool-bar-mode -1)   ; no tool bar with icons
-    (scroll-bar-mode -1) ; no scroll bars
-    (set-fringe-mode 0)
-)
-#+end_src
-
-** Window dividers
-#+end_src
-
-** Theme
-
-#+begin_src emacs-lisp
-(package-unless-install 'solarized-theme)
-(load-theme 'solarized-light t)
-
-(setq solarized-use-variable-pitch nil)
-(setq solarized-scale-org-headlines nil)
-
-(setq solarized-height-minus-1 1.0)
-(setq solarized-height-plus-1 1.0)
-(setq solarized-height-plus-2 1.0)
-(setq solarized-height-plus-3 1.0)
-(setq solarized-height-plus-4 1.0)
-#+end_src
-
-** Text
-
-*** Text format
-Setting font size to 10. The value to place is font-size * 10
-
-#+begin_src emacs-lisp
-(set-face-attribute 'default nil :height 100)
-#+end_src
-
-*** Line numbering
-#+begin_src emacs-lisp
-(setq display-line-numbers-type 'visual)
-(setq display-line-numbers-grow-only 1)
-(setq display-line-numbers-width-start 1)
-
-;Getting rid of linum on terminal type buffers
-(require 'display-line-numbers)
-(defcustom display-line-numbers-exempt-modes '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode)
-  "Major modes on which to disable the linum mode, exempts them from global requirement"
-  :group 'display-line-numbers
-  :type 'list
-  :version "green")
-
-(defun display-line-numbers--turn-on ()
-  "turn on line numbers but excempting certain majore modes defined in `display-line-numbers-exempt-modes'"
-  (if (and
-       (not (member major-mode display-line-numbers-exempt-modes))
-       (not (minibufferp)))
-      (display-line-numbers-mode)))
-
-(global-display-line-numbers-mode)
-#+end_src
-
-*** Line highlight
-#+begin_src emacs-lisp
-(global-hl-line-mode)
-#+end_src
-
-*** Line wrap
- #+begin_src emacs-lisp
-(global-visual-line-mode t)
- #+end_src
-
-*** Parenthesis
-Highlight matching parenthesis
- #+begin_src emacs-lisp
-(show-paren-mode 1)
- #+end_src
-
-*** Tabs
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq c-basic-offset 4)
-#+end_src
-
-** Modeline
-
-#+begin_src emacs-lisp
-(when (display-graphic-p)
-    (package-unless-install 'mini-modeline)
-    (mini-modeline-mode t)
-)
-(package-unless-install 'smart-mode-line)
-(sml/setup)
-#+end_src
-
-** Which-Key
-
-#+begin_src emacs-lisp
-(package-unless-install 'which-key)
-(require 'which-key)
-(which-key-mode)
-#+end_src
-
-** Perspective
-   
-#+begin_src emacs-lisp
-(package-unless-install 'perspective)
-(require 'perspective)
-(persp-mode 1)
-(setq persp-show-modestring 'nil)
-#+end_src
-
-*** Keymaps
-
-#+begin_src emacs-lisp
-(eval-after-load "org"
-    '(define-key org-mode-map (kbd "M-<tab>") nil))
-;Unset org-mode map "org-force-cycle-archived"
-(global-set-key (kbd "M-<tab>") 'persp-next)
-(global-set-key (kbd "s-<tab>") 'persp-next)
-(global-set-key (kbd "M-`") 'persp-prev)
-(global-set-key (kbd "M-n") 'persp-switch)
-
-#+end_src
-
-** Active Window Background
-
-#+begin_src emacs-lisp
-(defun highlight-selected-window ()
-    ;Walk through all buffers, set all other buffers to
-    ;default background
-    (walk-windows (lambda (w)
-    (with-current-buffer (window-buffer w)
-        (unless (eq w (selected-window))
-        (progn
-            (buffer-face-set 'default)
-            ;(face-remap-remove-relative fringeface)
-                )
-        )
-    )
-    ))
-    ;Finally, set current buffer background
-    (buffer-face-set '(:background "PaleTurquoise1"))
-    (if (minibuffer-window-active-p (selected-window))
-        (buffer-face-set '(:background "PaleTurquoise1"))
-        (buffer-face-set '(:background "LightYellow"))
-    )
-)
-;(add-hook 'buffer-list-update-hook 'highlight-selected-window)
-;(add-hook 'post-command-hook 'highlight-selected-window)
-#+end_src
-
-** Easy Prompt
-
-#+begin_src emacs-lisp
-(defalias 'yes-or-no-p 'y-or-n-p)
-#+end_src
-
-** General Keymaps
-
- Window splitting:
- #+begin_src emacs-lisp
-;;Instead of delete-horizontal-space
-(global-set-key (kbd "M-\\") 'split-window-horizontally)
-;;Instead of negative-argument
-(global-set-key (kbd "M-\-") 'split-window-vertically)
- #+end_src
-
- Window movement:
-#+begin_src emacs-lisp
-;;Unset the org-mode map of "org-mark-element"
-(eval-after-load "org"
-    '(define-key org-mode-map (kbd "M-h") nil)) 
-
-;;Instead of mark-paragraph (and org mark element)
-(global-set-key (kbd "M-h") 'windmove-left)
-;;Instead of downcase-word
-(global-set-key (kbd "M-l") 'windmove-right) 
-;;Instead of kill-sentence
-(global-set-key (kbd "M-k") 'windmove-up) 
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-j") 'windmove-down)
-;;Instead of mark-paragraph
-(global-set-key (kbd "M-<left>") 'windmove-left)
-;;Instead of downcase-word
-(global-set-key (kbd "M-<right>") 'windmove-right)
-;;Instead of kill-sentence
-(global-set-key (kbd "M-<up>") 'windmove-up)
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-<down>") 'windmove-down)
-(global-unset-key (kbd "M-d")) ;;Instead of kill-word
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d M-d") 'delete-window)
-(global-set-key (kbd "s-d s-d") 'delete-window)
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d D") 'kill-buffer-and-window)
-(defun set-window-width (n)
-    (adjust-window-trailing-edge (selected-window) ( - n (window-width)) t))
-(defun set-85-columns()
-    (interactive)
-    (set-window-width 85))
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d R") 'set-85-columns)
-;;Instead of tab-to-tab-stop
-(global-set-key (kbd "M-i") 'counsel-imenu)
-(global-set-key (kbd "M-b") 'counsel-switch-buffer)
-#+end_src
-
-Buffers:
-#+begin_src emacs-lisp
-;(eval-after-load "evil-autoloads"
-;    '(define-key evil-normal-state-map (kbd "C-b") nil))
-;(eval-after-load "evil-autoloads"
-;    '(global-set-key (kbd "C-b C-b") 'buffer-menu))
-;(eval-after-load "evil-autoloads"
-;    '(global-set-key (kbd "C-b C-d") 'kill-buffer))
-#+end_src
-
-* EXWM
-
-We execute the following code only if started with EXWM argument
-#+begin_src emacs-lisp
-(defun anerenv-load-exwm(switch)
-(progn
-#+end_src
-
-#+begin_src emacs-lisp
-(package-unless-install 'exwm)
-#+end_src
-
-Turn on `display-time-mode' if you don't use an external bar.
-#+begin_src emacs-lisp
-(setq display-time-default-load-average nil)
-(display-time-mode t)
-#+end_src
-
-You are strongly encouraged to enable something like `ido-mode' to alter
-the default behavior of 'C-x b', or you will take great pains to switch
-to or back from a floating frame (remember 'C-x 5 o' if you refuse this
-proposal however).
-You may also want to call `exwm-config-ido' later (see below).
-#+begin_src emacs-lisp
-(ido-mode 1)
-#+end_src
-
-Emacs server is not required to run EXWM but it has some interesting uses
-(see next section).
-#+begin_src emacs-lisp
-(server-start)
-#+end_src
-
-
-Load EXWM.
-#+begin_src emacs-lisp
-(require 'exwm)
-#+end_src
-
-Fix problems with Ido (if you use it).
-#+begin_src emacs-lisp
-(require 'exwm-config)
-(exwm-config-ido)
-#+end_src
-
-;; Set the initial number of workspaces (they can also be created later).
-#+begin_src emacs-lisp
-(setq exwm-workspace-number 4)
-#+end_src
-
-All buffers created in EXWM mode are named "*EXWM*". You may want to
-change it in `exwm-update-class-hook' and `exwm-update-title-hook', which
-are run when a new X window class name or title is available.  Here's
-some advice on this topic:
-+ Always use `exwm-workspace-rename-buffer` to avoid naming conflict.
-+ For applications with multiple windows (e.g. GIMP), the class names of
-  all windows are probably the same.  Using window titles for them makes
-  more sense.
-In the following example, we use class names for all windows except for
-Java applications and GIMP.
-#+begin_src emacs-lisp
-(add-hook 'exwm-update-class-hook
-          (lambda ()
-            (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                        (string= "gimp" exwm-instance-name))
-              (exwm-workspace-rename-buffer exwm-class-name))))
-(add-hook 'exwm-update-title-hook
-          (lambda ()
-            (when (or (not exwm-instance-name)
-                      (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                      (string= "gimp" exwm-instance-name))
-              (exwm-workspace-rename-buffer exwm-title))))
-#+end_src
-
-Global keybindings can be defined with `exwm-input-global-keys'.
-Here are a few examples:
-#+begin_src emacs-lisp
-(setq exwm-input-global-keys
-      `(
-        ;; Bind "s-r" to exit char-mode and fullscreen mode.
-        ([?\s-r] . exwm-reset)
-        ;; Bind "s-w" to switch workspace interactively.
-        ([?\s-w] . exwm-workspace-switch)
-        ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
-        ,@(mapcar (lambda (i)
-                    `(,(kbd (format "s-%d" i)) .
-                      (lambda ()
-                        (interactive)
-                        (exwm-workspace-switch-create ,i))))
-                  (number-sequence 0 9))
-        ;; Bind "s-&" to launch applications ('M-&' also works if the output
-        ;; buffer does not bother you).
-        ([?\s-&] . (lambda (command)
-		     (interactive (list (read-shell-command "$ ")))
-		     (start-process-shell-command command nil command)))
-        ;; Bind "s-<f2>" to "slock", a simple X display locker.
-        ([s-f2] . (lambda ()
-		    (interactive)
-		    (start-process "" nil "/usr/bin/slock")))
-        ([\s-<tab>] . persp-next)
-        ))
-#+end_src
-
-To add a key binding only available in line-mode, simply define it in
-`exwm-mode-map'.  The following example shortens 'C-c q' to 'C-q'.
-#+begin_src emacs-lisp
-(define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
-#+end_src
-
-;; The following example demonstrates how to use simulation keys to mimic
-;; the behavior of Emacs.  The value of `exwm-input-simulation-keys` is a
-;; list of cons cells (SRC . DEST), where SRC is the key sequence you press
-;; and DEST is what EXWM actually sends to application.  Note that both SRC
-;; and DEST should be key sequences (vector or string).
-#+begin_src emacs-lisp
-(setq exwm-input-simulation-keys
-      '(
-        ;; movement
-        ([?\C-b] . [left])
-        ([?\M-b] . [C-left])
-        ([?\C-f] . [right])
-        ([?\M-f] . [C-right])
-        ([?\C-p] . [up])
-        ([?\C-n] . [down])
-        ([?\C-a] . [home])
-        ([?\C-e] . [end])
-        ([?\M-v] . [prior])
-        ([?\C-v] . [next])
-        ([?\C-d] . [delete])
-        ([?\C-k] . [S-end delete])
-        ;; cut/paste.
-        ([?\C-w] . [?\C-x])
-        ([?\M-w] . [?\C-c])
-        ([?\C-y] . [?\C-v])
-        ;; search
-        ([?\C-s] . [?\C-f])))
-#+end_src
-
-Do not forget to enable EXWM. It will start by itself when things are
-ready.  You can put it _anywhere_ in your configuration.
-#+begin_src emacs-lisp
-(exwm-enable)
-
-(require 'exwm-systemtray)
-(exwm-systemtray-enable)
-#+end_src
-
-End the execute only if EXWM block.
-Close parens, then add to command switch.
-#+begin_src emacs-lisp
-))
-
-(add-to-list 'command-switch-alist '("--start-exwm" . anerenv-load-exwm))
-#+end_src
 * Global modes
   
 ** EVIL mode
@@ -714,3 +335,416 @@ org-toggle-latex-fragment
 (package-unless-install 'cmake-mode)
 #+end_src
 
+* EXWM
+
+We execute the following code only if started with EXWM argument
+#+begin_src emacs-lisp
+(defun anerenv-load-exwm(switch)
+(progn
+#+end_src
+
+#+begin_src emacs-lisp
+(package-unless-install 'exwm)
+#+end_src
+
+Turn on `display-time-mode' if you don't use an external bar.
+#+begin_src emacs-lisp
+(setq display-time-default-load-average nil)
+(display-time-mode t)
+#+end_src
+
+You are strongly encouraged to enable something like `ido-mode' to alter
+the default behavior of 'C-x b', or you will take great pains to switch
+to or back from a floating frame (remember 'C-x 5 o' if you refuse this
+proposal however).
+You may also want to call `exwm-config-ido' later (see below).
+#+begin_src emacs-lisp
+(ido-mode 1)
+#+end_src
+
+Emacs server is not required to run EXWM but it has some interesting uses
+(see next section).
+#+begin_src emacs-lisp
+(server-start)
+#+end_src
+
+
+Load EXWM.
+#+begin_src emacs-lisp
+(require 'exwm)
+#+end_src
+
+Fix problems with Ido (if you use it).
+#+begin_src emacs-lisp
+(require 'exwm-config)
+(exwm-config-ido)
+#+end_src
+
+;; Set the initial number of workspaces (they can also be created later).
+#+begin_src emacs-lisp
+(setq exwm-workspace-number 4)
+#+end_src
+
+All buffers created in EXWM mode are named "*EXWM*". You may want to
+change it in `exwm-update-class-hook' and `exwm-update-title-hook', which
+are run when a new X window class name or title is available.  Here's
+some advice on this topic:
++ Always use `exwm-workspace-rename-buffer` to avoid naming conflict.
++ For applications with multiple windows (e.g. GIMP), the class names of
+  all windows are probably the same.  Using window titles for them makes
+  more sense.
+In the following example, we use class names for all windows except for
+Java applications and GIMP.
+#+begin_src emacs-lisp
+(add-hook 'exwm-update-class-hook
+          (lambda ()
+            (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                        (string= "gimp" exwm-instance-name))
+              (exwm-workspace-rename-buffer exwm-class-name))))
+(add-hook 'exwm-update-title-hook
+          (lambda ()
+            (when (or (not exwm-instance-name)
+                      (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                      (string= "gimp" exwm-instance-name))
+              (exwm-workspace-rename-buffer exwm-title))))
+#+end_src
+
+Global keybindings can be defined with `exwm-input-global-keys'.
+Here are a few examples:
+#+begin_src emacs-lisp
+(setq exwm-input-global-keys
+      `(
+        ;; Bind "s-r" to exit char-mode and fullscreen mode.
+        ([?\s-r] . exwm-reset)
+        ;; Bind "s-w" to switch workspace interactively.
+        ([?\s-w] . exwm-workspace-switch)
+        ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+        ,@(mapcar (lambda (i)
+                    `(,(kbd (format "s-%d" i)) .
+                      (lambda ()
+                        (interactive)
+                        (exwm-workspace-switch-create ,i))))
+                  (number-sequence 0 9))
+        ;; Bind "s-&" to launch applications ('M-&' also works if the output
+        ;; buffer does not bother you).
+        ([?\s-&] . (lambda (command)
+		     (interactive (list (read-shell-command "$ ")))
+		     (start-process-shell-command command nil command)))
+        ;; Bind "s-<f2>" to "slock", a simple X display locker.
+        ([s-f2] . (lambda ()
+		    (interactive)
+		    (start-process "" nil "/usr/bin/slock")))
+        ([\s-<tab>] . persp-next)
+        ))
+#+end_src
+
+To add a key binding only available in line-mode, simply define it in
+`exwm-mode-map'.  The following example shortens 'C-c q' to 'C-q'.
+#+begin_src emacs-lisp
+(define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
+#+end_src
+
+;; The following example demonstrates how to use simulation keys to mimic
+;; the behavior of Emacs.  The value of `exwm-input-simulation-keys` is a
+;; list of cons cells (SRC . DEST), where SRC is the key sequence you press
+;; and DEST is what EXWM actually sends to application.  Note that both SRC
+;; and DEST should be key sequences (vector or string).
+#+begin_src emacs-lisp
+(setq exwm-input-simulation-keys
+      '(
+        ;; movement
+        ([?\C-b] . [left])
+        ([?\M-b] . [C-left])
+        ([?\C-f] . [right])
+        ([?\M-f] . [C-right])
+        ([?\C-p] . [up])
+        ([?\C-n] . [down])
+        ([?\C-a] . [home])
+        ([?\C-e] . [end])
+        ([?\M-v] . [prior])
+        ([?\C-v] . [next])
+        ([?\C-d] . [delete])
+        ([?\C-k] . [S-end delete])
+        ;; cut/paste.
+        ([?\C-w] . [?\C-x])
+        ([?\M-w] . [?\C-c])
+        ([?\C-y] . [?\C-v])
+        ;; search
+        ([?\C-s] . [?\C-f])))
+#+end_src
+
+Enabling randr
+#+begin_src emacs-lisp
+(require 'exwm-randr)
+(setq exwm-randr-workspace-output-plist '(0 "VGA1"))
+(add-hook 'exwm-randr-screen-change-hook
+          (lambda ()
+            (start-process-shell-command
+             "xrandr" nil "xrandr --output VGA-1 --right-of LVDS-1 --auto")))
+#+end_src
+
+Enabling exwm
+#+begin_src emacs-lisp
+(exwm-enable)
+(exwm-randr-enable)
+
+(require 'exwm-systemtray)
+(exwm-systemtray-enable)
+#+end_src
+
+
+End the execute only if EXWM block.
+Close parens, then add to command switch.
+#+begin_src emacs-lisp
+))
+
+(add-to-list 'command-switch-alist '("--start-exwm" . anerenv-load-exwm))
+#+end_src
+* UI
+
+** Clean UI
+Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
+#+begin_src emacs-lisp
+
+(customize-set-variable 'inhibit-startup-screen t) ; no splash screen on start
+(menu-bar-mode -1)   ; no menu bar
+(when (display-graphic-p)
+    (tool-bar-mode -1)   ; no tool bar with icons
+    (scroll-bar-mode -1) ; no scroll bars
+    (set-fringe-mode 0)
+)
+#+end_src
+
+** Window dividers
+#+end_src
+
+** Theme
+
+#+begin_src emacs-lisp
+(package-unless-install 'solarized-theme)
+(load-theme 'solarized-light t)
+
+(setq solarized-use-variable-pitch nil)
+(setq solarized-scale-org-headlines nil)
+
+(setq solarized-height-minus-1 1.0)
+(setq solarized-height-plus-1 1.0)
+(setq solarized-height-plus-2 1.0)
+(setq solarized-height-plus-3 1.0)
+(setq solarized-height-plus-4 1.0)
+#+end_src
+
+** Text
+
+*** Text format
+Setting font size to 10. The value to place is font-size * 10
+
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil :height 100)
+#+end_src
+
+*** Line numbering
+#+begin_src emacs-lisp
+(setq display-line-numbers-type 'visual)
+(setq display-line-numbers-grow-only 1)
+(setq display-line-numbers-width-start 1)
+
+;Getting rid of linum on terminal type buffers
+(require 'display-line-numbers)
+(defcustom display-line-numbers-exempt-modes '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode)
+  "Major modes on which to disable the linum mode, exempts them from global requirement"
+  :group 'display-line-numbers
+  :type 'list
+  :version "green")
+
+(defun display-line-numbers--turn-on ()
+  "turn on line numbers but excempting certain majore modes defined in `display-line-numbers-exempt-modes'"
+  (if (and
+       (not (member major-mode display-line-numbers-exempt-modes))
+       (not (minibufferp)))
+      (display-line-numbers-mode)))
+
+(global-display-line-numbers-mode)
+#+end_src
+
+*** Line highlight
+#+begin_src emacs-lisp
+(global-hl-line-mode)
+#+end_src
+
+*** Line wrap
+ #+begin_src emacs-lisp
+(global-visual-line-mode t)
+ #+end_src
+ 
+*** Parenthesis
+Highlight matching parenthesis
+ #+begin_src emacs-lisp
+(show-paren-mode 1)
+ #+end_src
+
+*** Tabs
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq c-basic-offset 4)
+#+end_src
+
+** Modeline
+
+#+begin_src emacs-lisp
+(when (display-graphic-p)
+    (package-unless-install 'mini-modeline)
+    (mini-modeline-mode t)
+)
+(package-unless-install 'smart-mode-line)
+(sml/setup)
+#+end_src
+
+Coloring the indicator based on evil state
+Taken from [[https://github.com/Malabarba/smart-mode-line/issues/195][Here]]
+#+begin_src emacs-lisp
+;; Color the evil tag - colors taken from spaceline
+(setq evil-normal-state-tag   (propertize " <N> " 'face '((:background "DarkGoldenrod2")))
+        evil-emacs-state-tag    (propertize " <E> " 'face '((:background "SkyBlue2")))
+        evil-insert-state-tag   (propertize " <I> " 'face '((:background "chartreuse3")))
+        evil-replace-state-tag  (propertize " <R> " 'face '((:background "chocolate")))
+        evil-motion-state-tag   (propertize " <M> " 'face '((:background "plum3")))
+        evil-visual-state-tag   (propertize " <V> " 'face '((:background "gray")))
+        evil-operator-state-tag (propertize " <O> " 'face '((:background "sandy brown"))))
+#+end_src
+
+** Which-Key
+
+#+begin_src emacs-lisp
+(package-unless-install 'which-key)
+(require 'which-key)
+(which-key-mode)
+#+end_src
+
+** Perspective
+   
+#+begin_src emacs-lisp
+(package-unless-install 'perspective)
+(require 'perspective)
+(persp-mode 1)
+(setq persp-show-modestring 'nil)
+#+end_src
+
+*** Keymaps
+
+#+begin_src emacs-lisp
+(eval-after-load "org"
+    '(define-key org-mode-map (kbd "M-<tab>") nil))
+;Unset org-mode map "org-force-cycle-archived"
+(global-set-key (kbd "M-<tab>") 'persp-next)
+(global-set-key (kbd "s-<tab>") 'persp-next)
+(global-set-key (kbd "M-`") 'persp-prev)
+(global-set-key (kbd "M-n") 'persp-switch)
+
+#+end_src
+
+** Active Window Background
+
+#+begin_src emacs-lisp
+(defun highlight-selected-window ()
+    ;Walk through all buffers, set all other buffers to
+    ;default background
+    (walk-windows (lambda (w)
+    (with-current-buffer (window-buffer w)
+        (unless (eq w (selected-window))
+        (progn
+            (buffer-face-set 'default)
+            ;(face-remap-remove-relative fringeface)
+                )
+        )
+    )
+    ))
+    ;Finally, set current buffer background
+    (buffer-face-set '(:background "PaleTurquoise1"))
+    (if (minibuffer-window-active-p (selected-window))
+        (buffer-face-set '(:background "PaleTurquoise1"))
+        (buffer-face-set '(:background "LightYellow"))
+    )
+)
+;(add-hook 'buffer-list-update-hook 'highlight-selected-window)
+;(add-hook 'post-command-hook 'highlight-selected-window)
+#+end_src
+
+** Easy Prompt
+
+#+begin_src emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** General Keymaps
+
+ Window splitting:
+ #+begin_src emacs-lisp
+;;Instead of delete-horizontal-space
+(global-set-key (kbd "M-\\") 'split-window-horizontally)
+;;Instead of negative-argument
+(global-set-key (kbd "M-\-") 'split-window-vertically)
+ #+end_src
+
+ Window movement:
+#+begin_src emacs-lisp
+;;Unset the org-mode map of "org-mark-element"
+(eval-after-load "org"
+    '(define-key org-mode-map (kbd "M-h") nil)) 
+
+;;Instead of mark-paragraph (and org mark element)
+(global-set-key (kbd "M-h") 'windmove-left)
+;;Instead of downcase-word
+(global-set-key (kbd "M-l") 'windmove-right) 
+;;Instead of kill-sentence
+(global-set-key (kbd "M-k") 'windmove-up) 
+;;Instead of indent-new-comment-line
+(global-set-key (kbd "M-j") 'windmove-down)
+;;Instead of mark-paragraph
+(global-set-key (kbd "M-<left>") 'windmove-left)
+;;Instead of downcase-word
+(global-set-key (kbd "M-<right>") 'windmove-right)
+;;Instead of kill-sentence
+(global-set-key (kbd "M-<up>") 'windmove-up)
+;;Instead of indent-new-comment-line
+(global-set-key (kbd "M-<down>") 'windmove-down)
+(global-unset-key (kbd "M-d")) ;;Instead of kill-word
+;;Instead of indent-new-comment-line
+(global-set-key (kbd "M-d M-d") 'delete-window)
+(global-set-key (kbd "s-d s-d") 'delete-window)
+;;Instead of indent-new-comment-line
+(global-set-key (kbd "M-d D") 'kill-buffer-and-window)
+(defun set-window-width (n)
+    (adjust-window-trailing-edge (selected-window) ( - n (window-width)) t))
+(defun set-85-columns()
+    (interactive)
+    (set-window-width 85))
+;;Instead of indent-new-comment-line
+(global-set-key (kbd "M-d R") 'set-85-columns)
+;;Instead of tab-to-tab-stop
+(global-set-key (kbd "M-i") 'counsel-imenu)
+(global-set-key (kbd "M-b") 'counsel-switch-buffer)
+#+end_src
+
+Buffers:
+#+begin_src emacs-lisp
+;(eval-after-load "evil-autoloads"
+;    '(define-key evil-normal-state-map (kbd "C-b") nil))
+;(eval-after-load "evil-autoloads"
+;    '(global-set-key (kbd "C-b C-b") 'buffer-menu))
+;(eval-after-load "evil-autoloads"
+;    '(global-set-key (kbd "C-b C-d") 'kill-buffer))
+#+end_src
+
+** Diminish
+#+begin_src emacs-lisp
+(package-unless-install 'diminish)
+(diminish 'ivy-mode)
+(diminish 'undo-tree-mode)
+(diminish 'visual-line-mode)
+(diminish 'awk-mode)
+(diminish 'which-key-mode)
+(diminish 'mini-modeline-mode)
+(diminish 'eldoc-mode)
+#+end_src
