@@ -249,10 +249,46 @@ were used in the appropriate major mode.
 *** Minted
     
 #+begin_src emacs-lisp
-(setq org-latex-listings 'minted)
-(setq org-latex-packages-alist '(("" "polyglossia" "minted" "xcolor")))
+;(setq org-latex-listings 'minted)
 (setq org-latex-pdf-process
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(require 'ox-latex)
+(unless (boundp 'org-latex-classes)
+  (setq org-latex-classes nil))
+
+(setq org-latex-classes
+             '(("article"
+"\\documentclass{article}
+[DEFAULT-PACKAGES]
+\\usepackage{polyglossia}
+\\usepackage{minted}
+\\usepackage{xcolor}
+\\usepackage{indentfirst}
+\\usepackage{amsfonts}
+\\usepackage{amsmath}
+\\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\\setdefaultlanguage{hebrew}
+\\setlength{\\parindent}{0in}
+
+\\setminted{
+    bgcolor=codebg,
+    breaklines=true,
+    mathescape,
+    linenos=false,
+    fontsize=\scriptsize
+}
+\\newfontfamily\\hebrewfont{Liberation Sans}[Script=Hebrew]
+\\setotherlanguage{hebrew}
+"
+        ("\\section{%s}" . "\\section*{%s}")
+        ("\\subsection{%s}" . "\\subsection*{%s}")
+        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+        ("\\paragraph{%s}" . "\\paragraph*{%s}")
+        ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(setq org-export-with-toc nil)
+(setq org-export-with-section-numbers nil)
 #+end_src
 
 *** Fixing previews for things with polygloss
@@ -474,19 +510,45 @@ To add a key binding only available in line-mode, simply define it in
 #+end_src
 
 Enabling randr
+
+Partially from [[https://github.com/ch11ng/exwm/issues/202][here]]. (All commented out now)
 #+begin_src emacs-lisp
 (require 'exwm-randr)
-(setq exwm-randr-workspace-output-plist '(0 "VGA1"))
+;(setq exwm-randr-workspace-output-plist '(0 "VGA1"))
+
+;; (defun my-exwm-xrandr-hook ()
+;; (interactive)
+;; (let* ((connected-cmd "xrandr -q|awk '/ connected/ {print $1}'")
+;;     (connected (process-lines "bash" "-lc" connected-cmd))
+;;     (primary (nth 0 connected))
+;;     (other (nth 1 connected))
+;;     (previous (delete-dups (seq-remove
+;;                 'integerp
+;;                 exwm-randr-workspace-output-plist))))
+;;     (progn 
+;;     (cond (other
+;;     (progn (my-exwm-xrandr-config primary other)
+;;         (my-exwm-xrandr-two-outputs primary other)))
+;;     (t (progn (my-exwm-xrandr-config primary primary)
+;;             (mapcar 'my-exwm-xrandr-off
+;;                 (delete primary previous)))))
+;;     (exwm-randr--refresh)
+;;     (exwm--log "Display: %s refreshed." connected))))
+
+;; (setq exwm-randr-screen-change-hook
+;;     (lambda () (my-exwm-xrandr-hook)))
+
+(setq exwm-randr-workspace-output-plist '(1 "Virtual1" 2 "Virtual2"))
 (add-hook 'exwm-randr-screen-change-hook
           (lambda ()
             (start-process-shell-command
-             "xrandr" nil "xrandr --output VGA-1 --right-of LVDS-1 --auto")))
+            "xrandr" nil "xrandr --output Virtual1 --left-of Virtual2 --auto")))
 #+end_src
 
 Enabling exwm
 #+begin_src emacs-lisp
-(exwm-enable)
 (exwm-randr-enable)
+(exwm-enable)
 
 (require 'exwm-systemtray)
 (exwm-systemtray-enable)
@@ -588,6 +650,26 @@ Highlight matching parenthesis
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq c-basic-offset 4)
+#+end_src
+
+*** BIDI and lang
+
+#+begin_src emacs-lisp
+(setq current-language-environment 'Hebrew)
+(setq-default bidi-display-reordering t)
+(setq-default bidi-paragraph-direction 'nil)
+
+(defun set-bidi-env ()
+  "interactive"
+  (setq bidi-paragraph-direction 'nil))
+
+(add-hook 'org-mode-hook 'set-bidi-env)
+#+end_src
+
+*** KEYS
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-SPC") 'toggle-input-method)
 #+end_src
 
 ** Modeline
