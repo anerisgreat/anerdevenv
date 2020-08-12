@@ -1,21 +1,6 @@
-#+Title: Aner's Emacs Configuration
+	#+Title: Aner's Emacs Configuration
 #+property: header-args :results silent
-#+LATEX_HEADER: \usepackage{xcolor}
-#+LATEX_HEADER: \usepackage{minted}
-#+LATEX_HEADER: \usepackage{polyglossia}
-#+LATEX_HEADER: \setotherlanguage{hebrew} #+LATEX_HEADER: \newfontfamily\hebrewfont{Noto Sans Hebrew}[Script=Hebrew]
-#+options: toc:nil
-#+begin_export latex
-\definecolor{codebg}{rgb}{0.95,0.95,0.95}
-\setminted{
-  bgcolor=codebg,
-  breaklines=true,
-  mathescape,
-  linenos=false,
-  fontsize=\scriptsize
-}
-#+end_export
-
+	
 * Base Configuration
 
 ** Package installation
@@ -153,6 +138,16 @@ Persp projectile
 (setq tramp-verbose 6)
 #+end_src
 
+** YASnippet
+
+#+begin_src emacs-lisp
+
+(package-unless-install 'yasnippet)
+(yas-global-mode 1)
+
+#+end_src
+
+
 * Major modes
 
 ** Multi-Term
@@ -249,7 +244,7 @@ were used in the appropriate major mode.
 *** Minted
     
 #+begin_src emacs-lisp
-;(setq org-latex-listings 'minted)
+(setq org-latex-listings 'minted)
 (setq org-latex-pdf-process
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
@@ -262,13 +257,13 @@ were used in the appropriate major mode.
 "\\documentclass{article}
 [DEFAULT-PACKAGES]
 \\usepackage{polyglossia}
-\\usepackage{minted}
+\\usepackage[cache=false$$$$]{minted}
 \\usepackage{xcolor}
 \\usepackage{indentfirst}
 \\usepackage{amsfonts}
 \\usepackage{amsmath}
 \\definecolor{codebg}{rgb}{0.95,0.95,0.95}
-\\setdefaultlanguage{hebrew}
+\\setdefaultlanguage{english}
 \\setlength{\\parindent}{0in}
 
 \\setminted{
@@ -276,7 +271,6 @@ were used in the appropriate major mode.
     breaklines=true,
     mathescape,
     linenos=false,
-    fontsize=\scriptsize
 }
 \\newfontfamily\\hebrewfont{Liberation Sans}[Script=Hebrew]
 \\setotherlanguage{hebrew}
@@ -349,6 +343,75 @@ Do this to set ASYNC python command
 
 (with-eval-after-load 'org
   (add-hook 'org-babel-after-execute-hook 'shk-fix-inline-images))
+#+end_src
+
+*** Snippets
+    
+Want to create snippets for latex insertion.
+There is one template for inline and one template for standalone latex snippets.
+Each template is defind by two templates. One for other langauges and one for standard
+input. This is done to toggle back to the original language once done with the
+function toggle-input-method.
+
+#+begin_src emacs-lisp
+
+(defun dumb-toggle-input-method () 
+    (if current-input-method (toggle-input-method))
+)
+;Inline
+(yas-define-snippets 'org-mode (list (list 
+                                      nil
+                                      "\$$1\$$0"
+                                      "ORG_LATEX_INLINE_SNIPPET_ENG"
+                                      '(not (eval current-input-method))
+                                      nil
+                                      nil
+                                      nil
+                                      "C-l"
+                                      nil
+                                      nil
+                                      )))
+
+(yas-define-snippets 'org-mode (list (list 
+                                      nil
+                                      "\$$1\$$0"
+                                      "ORG_LATEX_INLINE_SNIPPET_OTHER_LANG"
+                                      '(eval current-input-method)
+                                      nil
+                                      '((unused (dumb-toggle-input-method))
+                                        (yas-after-exit-snippet-hook 'toggle-input-method))
+                                      nil
+                                      "C-l"
+                                      nil
+                                      nil
+                                      )))
+
+;Not inline
+(yas-define-snippets 'org-mode (list (list 
+                                      nil
+                                      "\n\n\$\$$1\$\$\n\n$0"
+                                      "ORG_LATEX_OUTLINE_SNIPPET_ENG"
+                                      '(not (eval current-input-method))
+                                      nil
+                                      nil
+                                      nil
+                                      "C-S-l"
+                                      nil
+                                      nil
+                                      )))
+(yas-define-snippets 'org-mode (list (list 
+                                      nil
+                                      "\n\n\$\$$1\$\$\n\n$0"
+                                      "ORG_LATEX_OUTLINE_SNIPPET_OTHER_LANG"
+                                      '(eval current-input-method)
+                                      nil
+                                      '((unused (dumb-toggle-input-method))
+                                        (yas-after-exit-snippet-hook 'toggle-input-method))
+                                      nil
+                                      "C-S-l"
+                                      nil
+                                      nil
+)))
 #+end_src
 
 *** Useful to remember
@@ -554,6 +617,11 @@ Enabling exwm
 (exwm-systemtray-enable)
 #+end_src
 
+Sending simulated keys to X windows
+#+begin_src emacs-lisp
+(setq exwm-input-prefix-keys
+  '(?\C-x ?\C-u ?\C-h ?\M-x ?\M-& ?\M-: ?\s-d ?\s-m ?\s-r ?\s-s ?\s-q ?\H-l ?\C-w))
+#+end_src
 
 End the execute only if EXWM block.
 Close parens, then add to command switch.
@@ -598,11 +666,17 @@ Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 
 ** Text
 
-*** Text format
+*** Text font
 Setting font size to 10. The value to place is font-size * 10
 
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :height 100)
+(set-face-attribute 'default nil
+                    :font "LiberationMono"
+                    :height 100
+                    :weight 'normal
+                    :width 'normal)
+
+(set-fontset-font "fontset-default" 'hebrew (font-spec :family "LiberationMono"))
 #+end_src
 
 *** Line numbering
