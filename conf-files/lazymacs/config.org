@@ -1,38 +1,40 @@
-	#+Title: Aner's Emacs Configuration
+#+Title: Aner's Emacs Configuration
 #+property: header-args :results silent
+#+options: toc:2
+#+latex_class: article
 	
 * Base Configuration
-
-** Package installation
+ 
+** Package installation with straight and use-package
 
 Installation of all required packages.
 
-Taken from [[https://stackoverflow.com/questions/55038594/setting-up-emacs-on-new-machine-with-init-el-and-package-installation ][this post on StackOverflow]].
-
-Declare repositories:
-
-#+begin_src emacs-lisp :latex_attr optoins bgcolor=dark
-(setq package-archives
-      '(("gnu" . "http://elpa.gnu.org/packages/")
-        ("melpa" . "http://melpa.org/packages/")))
-#+end_src
-
-Initialize package management and refresh repositories unless archived.
-If repositories need to be refreshed, this command should be called.
+Straight initialization found [[https://www.github.com/raxod502/straight.el][here]]
 
 #+begin_src emacs-lisp
-(require 'package)
-(package-initialize)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(unless package-archive-contents
-  (package-refresh-contents))
+(setq vc-follow-symlinks t)
 #+end_src
 
-Defining a function to install a package unless already installed
+Install use-package
+
+Installation of usepackage taken from [[https://github.com/KaratasFurkan/.emacs.d/][KaratasFurkan's generously shared emacs config]].
+
 #+begin_src emacs-lisp
-(defun package-unless-install(pkg)
-  (unless (package-installed-p pkg)
-    (package-install pkg)))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 #+end_src
 
 ** Backup files
@@ -40,22 +42,26 @@ Defining a function to install a package unless already installed
 Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files][this post on StackOverflow]]
 
 #+begin_src emacs-lisp
-(setq backup-directory-alist `(("." . "~/.cache/emacs-backups/")))
-(setq backup-by-copying t)
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-   version-control t)
+(setq backup-directory-alist `(("." . "~/.cache/emacs-backups/"))
+      backup-by-copying t
+      delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2
+      version-control t)
 #+end_src
 
-* Global modes
+* Environment packages
+  
+Load all the packages that define the work environment.
   
 ** EVIL mode
 
 #+begin_src emacs-lisp
-(package-unless-install 'evil)
-(require 'evil )
-(evil-mode 1)
+(use-package evil
+  :config
+      (require 'evil )
+      (evil-mode 1)
+  )
 #+end_src
 
 ** IVY
@@ -63,14 +69,21 @@ Taken from [[https://stackoverflow.com/questions/151945/how-do-i-control-how-ema
 Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 
 #+begin_src emacs-lisp
-(package-unless-install 'ivy)
-(require 'ivy)
-(package-unless-install 'ivy-hydra)
-(require 'ivy-hydra)
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-(setq ivy-count-format "(%d/%d) ")
+(use-package ivy
+  :custom
+    (ivy-use-virtual-buffers t)
+    (enable-recursive-minibuffers t)
+    (ivy-count-format "(%d/%d) ")
+  :config
+    (ivy-mode 1)
+)
+
+(use-package ivy-hydra
+  :after ivy)
+(use-package ivy-avy
+  :after ivy)
+(use-package counsel
+  :after ivy)
 #+end_src
 
 *** Keymaps
@@ -90,105 +103,106 @@ Enabling IVY. Taken from [[https://github.com/abo-abo/swiper][their website]].
 
 Package installation
 #+begin_src emacs-lisp
-(package-unless-install 'projectile)
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "M-p a") 'projectile-add-known-project)
+(use-package projectile
+  :config
+    (projectile-mode +1)
+  :bind-keymap
+    ("M-p" . projectile-command-map)
+  :bind
+    (:map projectile-command-map
+          ("a" . projectile-add-known-project)
+    )
+)
 #+end_src
 
 Ivy for projectile:
+Parts taken from [[https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion][this post]] and [[https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows][this post]] from StackOverflow.
 #+begin_src emacs-lisp
-(package-unless-install 'counsel-projectile)
-(require 'counsel-projectile)
-(counsel-projectile-mode +1)
-(setq projectile-completion-system 'ivy)
-#+end_src
-
-Fixing counsel to display keymaps during M-x
-Taken from [[https://emacs.stackexchange.com/questions/40787/display-corresponding-key-binding-of-command-during-m-x-completion][this post]] and [[https://emacs.stackexchange.com/questions/38841/counsel-m-x-always-shows][this post]] from StackOverflow.
-
-#+begin_src emacs-lisp
-(when (commandp 'counsel-M-x)
-    (global-set-key [remap execute-extended-command] 'counsel-M-x))
-(setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
+(use-package counsel-projectile
+  :config
+    (counsel-projectile-mode +1)
+    (setq projectile-completion-system 'ivy)
+    ;Making counsel start with empty regex
+    (when (commandp 'counsel-M-x)
+        (global-set-key [remap execute-extended-command] 'counsel-M-x))
+    (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "")
+)
 #+end_src
 
 Persp projectile
 
 #+begin_src emacs-lisp
-(package-unless-install 'persp-projectile)
-(define-key projectile-mode-map (kbd "M-p p") 'projectile-persp-switch-project)
-#+end_src
-
-*** Keymaps
-
-#+begin_src emacs-lisp
-(global-set-key (kbd "C-b") 'projectile-display-buffer)
 #+end_src
 
 ** Magit
 
 #+begin_src emacs-lisp
-(package-unless-install 'magit)
+(use-package magit)
 #+end_src
 
 ** Tramp
 
 #+begin_src emacs-lisp
-(setq tramp-verbose 6)
+(use-package tramp
+  :straight (:type built-in)
+  :custom
+    (tramp-verbose 6)
+)
 #+end_src
 
 ** YASnippet
 
 #+begin_src emacs-lisp
-
-(package-unless-install 'yasnippet)
-(yas-global-mode 1)
-
+(use-package yasnippet
+  :config
+    (yas-global-mode 1)
+)
 #+end_src
 
+** Flycheck
+   
+Must set up
+
+#+begin_src emacs-lisp
+(use-package flycheck)
+#+end_src
 
 * Major modes
 
-** Multi-Term
+** VTerm
 
 #+begin_src emacs-lisp
-(package-unless-install 'vterm)
-
-(eval-after-load "vterm"
-    '(progn (define-key vterm-mode-map (kbd "M-h") nil)
-        (define-key vterm-mode-map (kbd "M-j") nil)
-        (define-key vterm-mode-map (kbd "M-k") nil)
-        (define-key vterm-mode-map (kbd "M-l") nil)
-        (define-key vterm-mode-map (kbd "M-d") nil)
-    )
-)
+(use-package vterm)
 #+end_src
 
 ** PDF-Tools
 
-For viewing PDF files and such! YAY
+For viewing PDF files and such!
+Broken for the time being
 #+begin_src emacs-lisp
-;(package-unless-install 'pdf-tools)
-;(require 'pdf-tools)
-;(pdf-tools-install)
+;(use-package pdf-tools
+;  :config
+;    (pdf-tools-install)
+;)
 #+end_src
 
-*** Stop the blinking
+*** Stop the blinking on PDF-View-Mode
 
 Taken from [[https://github.com/munen/emacs.d/blob/master/configuration.org][Munen's configuration on GitHub]].
 When using evil-mode and pdf-tools and looking at a zoomed PDF, it will blink, because the cursor blinks.
 This configuration disables this whilst retaining the blinking cursor in other modes.
+Disabled for now
 #+begin_src emacs-lisp
-(evil-set-initial-state 'pdf-view-mode 'emacs)
-(add-hook 'pdf-view-mode-hook
-  (lambda ()
-    (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+;(evil-set-initial-state 'pdf-view-mode 'emacs)
+;(add-hook 'pdf-view-mode-hook
+;  (lambda ()
+;    (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
 #+end_src
 
 ** ORG
    
-*** General
+All things org!
+   
 *** Babel
 
 Define languages to use 
@@ -221,24 +235,22 @@ the major-mode of the code. It also changes the behavior of TAB to as if it
 were used in the appropriate major mode.
 
 #+begin_src emacs-lisp
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
-(setq org-src-preserve-indentation 1)
+(setq org-src-fontify-natively t
+      org-src-tab-acts-natively t
+      org-src-preserve-indentation 1)
 #+end_src
 
 *** HTML Preview
 
 #+begin_src emacs-lisp
-(package-unless-install 'org-preview-html)
-(package-unless-install 'htmlize)
-(require 'org-preview-html)
-(require 'htmlize)
+;(use-package org-preview-html)
+(use-package htmlize)
 #+end_src
 
 *** PDF Preview
 
 #+begin_src emacs-lisp
-(package-unless-install 'latex-preview-pane)
+;(use-package latex-preview-pane)
 #+end_src
 
 *** Minted
@@ -257,7 +269,7 @@ were used in the appropriate major mode.
 "\\documentclass{article}
 [DEFAULT-PACKAGES]
 \\usepackage{polyglossia}
-\\usepackage[cache=false$$$$]{minted}
+\\usepackage[cache=false]{minted}
 \\usepackage{xcolor}
 \\usepackage{indentfirst}
 \\usepackage{amsfonts}
@@ -287,7 +299,17 @@ were used in the appropriate major mode.
 
 *** Fixing previews for things with polygloss
 #+begin_src emacs-lisp
-;(setq org-preview-latex-process-alist '(())
+;(setq-default org-preview-latex-process-alist (car(get 'standard-value 'org-preview-latex-process-alist)))
+
+;Filtering out Hebrew from latex fragments
+(defun my-latex-filter-nolang (text backend info)
+  "No language in latex fragment exports"
+  (when (org-export-derived-backend-p backend 'latex)
+    (replace-regexp-in-string "aner" "cheese" text)))
+#+end_src
+
+#+begin_src emacs-lisp
+;(add-to-list 'org-export-filter-latex-fragment-functions 'my-latex-filter-nolang)
 #+end_src
 
 This should render Hebrew text.
@@ -295,9 +317,7 @@ This should render Hebrew text.
 #+begin_export latex
 \begin{hebrew}
 #+end_export
-
 זה אמור לעבוד
-
 #+begin_export latex
 \end{hebrew}
 #+end_export
@@ -306,10 +326,10 @@ This should render Hebrew text.
 
 #+begin_src emacs-lisp
 ;Set for solarized theme
-(set-face-background 'org-block-begin-line "#FFF3D6")
-(set-face-background 'org-block-end-line "#FFF3D6")
-(set-face-background 'org-block (face-attribute 'default :background))
-(package-unless-install 'color)
+;(set-face-background 'org-block-begin-line "#FFF3D6")
+;(set-face-background 'org-block-end-line "#FFF3D6")
+;(set-face-background 'org-block (face-attribute 'default :background))
+(straight-use-package 'color)
 #+end_src
 
 *** Python version
@@ -321,17 +341,16 @@ This should render Hebrew text.
 *** Async blocks
 
 #+begin_src emacs-lisp
-(package-unless-install 'ob-async)
-(require 'ob-async)
+(use-package ob-async
+  :config
+    ;Setting command of async blocks to Python3
+    (add-hook 'ob-async-pre-execute-src-block-hook
+            '(lambda ()
+            (setq org-babel-python-command "python3")
+    ))
+)
 #+end_src
 
-Do this to set ASYNC python command
-#+begin_src emacs-lisp
-(add-hook 'ob-async-pre-execute-src-block-hook
-        '(lambda ()
-           (setq org-babel-python-command "python3")
-))
-#+end_src
 *** Inline images
 
 #+begin_src emacs-lisp
@@ -421,20 +440,29 @@ To preview latex fragment as image embedded in text
 org-toggle-latex-fragment
 #+end_example
 
+*** Binding
+
+#+begin_src emacs-lisp
+(define-key org-mode-map (kbd "C-a") nil)
+(define-key org-mode-map (kbd "C-a l") 'org-toggle-latex-fragment)
+#+end_src
+
 ** Markdown
 
 #+begin_src emacs-lisp
-(package-unless-install 'markdown-mode)
-(require 'markdown-mode)
+(use-package markdown-mode)
 #+end_src
 
 ** CMake
 
 #+begin_src emacs-lisp
-(package-unless-install 'cmake-mode)
+(use-package cmake-mode)
 #+end_src
 
-* EXWM
+  
+* UI
+
+** EXWM
 
 We execute the following code only if started with EXWM argument
 #+begin_src emacs-lisp
@@ -443,7 +471,7 @@ We execute the following code only if started with EXWM argument
 #+end_src
 
 #+begin_src emacs-lisp
-(package-unless-install 'exwm)
+(straight-use-package 'exwm)
 #+end_src
 
 Turn on `display-time-mode' if you don't use an external bar.
@@ -466,7 +494,6 @@ Emacs server is not required to run EXWM but it has some interesting uses
 #+begin_src emacs-lisp
 (server-start)
 #+end_src
-
 
 Load EXWM.
 #+begin_src emacs-lisp
@@ -575,6 +602,7 @@ To add a key binding only available in line-mode, simply define it in
 Enabling randr
 
 Partially from [[https://github.com/ch11ng/exwm/issues/202][here]]. (All commented out now)
+
 #+begin_src emacs-lisp
 (require 'exwm-randr)
 ;(setq exwm-randr-workspace-output-plist '(0 "VGA1"))
@@ -621,6 +649,7 @@ Sending simulated keys to X windows
 #+begin_src emacs-lisp
 (setq exwm-input-prefix-keys
   '(?\C-x ?\C-u ?\C-h ?\M-x ?\M-& ?\M-: ?\s-d ?\s-m ?\s-r ?\s-s ?\s-q ?\H-l ?\C-w))
+(push ?\C-w exwm-input-prefix-keys) 
 #+end_src
 
 End the execute only if EXWM block.
@@ -630,7 +659,6 @@ Close parens, then add to command switch.
 
 (add-to-list 'command-switch-alist '("--start-exwm" . anerenv-load-exwm))
 #+end_src
-* UI
 
 ** Clean UI
 Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
@@ -645,23 +673,19 @@ Disabling the toolbar, the splash-screen, the menu-bar and the scroll-bar
 )
 #+end_src
 
-** Window dividers
-#+end_src
-
 ** Theme
 
 #+begin_src emacs-lisp
-(package-unless-install 'solarized-theme)
+(straight-use-package 'solarized-theme)
 (load-theme 'solarized-light t)
 
-(setq solarized-use-variable-pitch nil)
-(setq solarized-scale-org-headlines nil)
-
-(setq solarized-height-minus-1 1.0)
-(setq solarized-height-plus-1 1.0)
-(setq solarized-height-plus-2 1.0)
-(setq solarized-height-plus-3 1.0)
-(setq solarized-height-plus-4 1.0)
+(setq solarized-use-variable-pitch nil
+      solarized-scale-org-headlines nil
+      solarized-height-minus-1 1.0
+      solarized-height-plus-1 1.0
+      solarized-height-plus-2 1.0
+      solarized-height-plus-3 1.0
+      solarized-height-plus-4 1.0)
 #+end_src
 
 ** Text
@@ -676,14 +700,15 @@ Setting font size to 10. The value to place is font-size * 10
                     :weight 'normal
                     :width 'normal)
 
-(set-fontset-font "fontset-default" 'hebrew (font-spec :family "LiberationMono"))
+;Setting for Hebrew
+;(set-fontset-font "fontset-default" 'hebrew (font-spec :family "LiberationMono"))
 #+end_src
 
 *** Line numbering
 #+begin_src emacs-lisp
-(setq display-line-numbers-type 'visual)
-(setq display-line-numbers-grow-only 1)
-(setq display-line-numbers-width-start 1)
+(setq display-line-numbers-type 'visual
+      display-line-numbers-grow-only 1
+      display-line-numbers-width-start 1)
 
 ;Getting rid of linum on terminal type buffers
 (require 'display-line-numbers)
@@ -729,7 +754,7 @@ Highlight matching parenthesis
 *** BIDI and lang
 
 #+begin_src emacs-lisp
-(setq current-language-environment 'Hebrew)
+(setq-default default-input-method "hebrew")
 (setq-default bidi-display-reordering t)
 (setq-default bidi-paragraph-direction 'nil)
 
@@ -737,23 +762,17 @@ Highlight matching parenthesis
   "interactive"
   (setq bidi-paragraph-direction 'nil))
 
-(add-hook 'org-mode-hook 'set-bidi-env)
-#+end_src
-
-*** KEYS
-
-#+begin_src emacs-lisp
-(global-set-key (kbd "C-SPC") 'toggle-input-method)
+(add-hook 'org-mode-hook 'set-bidi-env) ;Because org-mode thinks its special
 #+end_src
 
 ** Modeline
 
 #+begin_src emacs-lisp
 (when (display-graphic-p)
-    (package-unless-install 'mini-modeline)
+    (straight-use-package 'mini-modeline)
     (mini-modeline-mode t)
 )
-(package-unless-install 'smart-mode-line)
+(straight-use-package 'smart-mode-line)
 (sml/setup)
 #+end_src
 
@@ -773,31 +792,26 @@ Taken from [[https://github.com/Malabarba/smart-mode-line/issues/195][Here]]
 ** Which-Key
 
 #+begin_src emacs-lisp
-(package-unless-install 'which-key)
-(require 'which-key)
-(which-key-mode)
+(use-package which-key
+  :config
+    (which-key-mode)
+)
 #+end_src
 
 ** Perspective
    
 #+begin_src emacs-lisp
-(package-unless-install 'perspective)
-(require 'perspective)
-(persp-mode 1)
-(setq persp-show-modestring 'nil)
-#+end_src
+(use-package perspective
+   :config
+    (persp-mode 1)
+    (setq persp-show-modestring 'nil)
+)
 
-*** Keymaps
-
-#+begin_src emacs-lisp
-(eval-after-load "org"
-    '(define-key org-mode-map (kbd "M-<tab>") nil))
-;Unset org-mode map "org-force-cycle-archived"
-(global-set-key (kbd "M-<tab>") 'persp-next)
-(global-set-key (kbd "s-<tab>") 'persp-next)
-(global-set-key (kbd "M-`") 'persp-prev)
-(global-set-key (kbd "M-n") 'persp-switch)
-
+(use-package persp-projectile
+  :bind(:map projectile-command-map
+    ("p" . projectile-persp-switch-project)
+  )
+)
 #+end_src
 
 ** Active Window Background
@@ -834,73 +848,69 @@ Taken from [[https://github.com/Malabarba/smart-mode-line/issues/195][Here]]
 #+end_src
 
 ** General Keymaps
-
- Window splitting:
- #+begin_src emacs-lisp
-;;Instead of delete-horizontal-space
-(global-set-key (kbd "M-\\") 'split-window-horizontally)
-;;Instead of negative-argument
-(global-set-key (kbd "M-\-") 'split-window-vertically)
- #+end_src
-
- Window movement:
+   
+Setting these functions for window resizing so we can bind them
+   
 #+begin_src emacs-lisp
-;;Unset the org-mode map of "org-mark-element"
-(eval-after-load "org"
-    '(define-key org-mode-map (kbd "M-h") nil)) 
-
-;;Instead of mark-paragraph (and org mark element)
-(global-set-key (kbd "M-h") 'windmove-left)
-;;Instead of downcase-word
-(global-set-key (kbd "M-l") 'windmove-right) 
-;;Instead of kill-sentence
-(global-set-key (kbd "M-k") 'windmove-up) 
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-j") 'windmove-down)
-;;Instead of mark-paragraph
-(global-set-key (kbd "M-<left>") 'windmove-left)
-;;Instead of downcase-word
-(global-set-key (kbd "M-<right>") 'windmove-right)
-;;Instead of kill-sentence
-(global-set-key (kbd "M-<up>") 'windmove-up)
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-<down>") 'windmove-down)
-(global-unset-key (kbd "M-d")) ;;Instead of kill-word
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d M-d") 'delete-window)
-(global-set-key (kbd "s-d s-d") 'delete-window)
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d D") 'kill-buffer-and-window)
 (defun set-window-width (n)
     (adjust-window-trailing-edge (selected-window) ( - n (window-width)) t))
 (defun set-85-columns()
     (interactive)
     (set-window-width 85))
-;;Instead of indent-new-comment-line
-(global-set-key (kbd "M-d R") 'set-85-columns)
-;;Instead of tab-to-tab-stop
-(global-set-key (kbd "M-i") 'counsel-imenu)
-(global-set-key (kbd "M-b") 'counsel-switch-buffer)
 #+end_src
+   
+Setting of keybindings based on [[https://stackoverflow.com/questions/49853494/the-best-way-to-set-a-key-to-do-nothing][this]]
 
-Buffers:
 #+begin_src emacs-lisp
-;(eval-after-load "evil-autoloads"
-;    '(define-key evil-normal-state-map (kbd "C-b") nil))
-;(eval-after-load "evil-autoloads"
-;    '(global-set-key (kbd "C-b C-b") 'buffer-menu))
-;(eval-after-load "evil-autoloads"
-;    '(global-set-key (kbd "C-b C-d") 'kill-buffer))
+(defvar anerenv-global-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "M-h") 'windmove-left)
+    (define-key map (kbd "M-l") 'windmove-right) ;Instead of downcase-word
+    (define-key map (kbd "M-k") 'windmove-up) ;Instead of kill-sentence
+    (define-key map (kbd "M-j") 'windmove-down) ;Instead of indent-new-comment-line
+    (define-key map (kbd "M-<left>") 'windmove-left) ;Instead of mark-paragraph
+    (define-key map (kbd "M-<right>") 'windmove-right) ;Instead of downcase-word
+    (define-key map (kbd "M-<up>") 'windmove-up) ;Instead of kill-sentence
+    (define-key map (kbd "M-<down>") 'windmove-down) ;Instead of indent-new-comment-line
+    (define-key map (kbd "M-d M-d") 'delete-window) ;Instead of indent-new-comment-line
+    (define-key map (kbd "s-d s-d") 'delete-window)
+    (define-key map (kbd "M-d D") 'kill-buffer-and-window) ;Instead of indent-new-comment-line
+    (define-key map (kbd "M-i") 'counsel-imenu) ;Instead of tab-to-tab-stop
+    (define-key map (kbd "M-\\") 'split-window-horizontally) ;Instead of delete-horizontal-space
+    (define-key map (kbd "M-\-") 'split-window-vertically) ;Instead of negative-argument
+    (define-key map (kbd "M-d R") 'set-85-columns) ;Instead of indent-new-comment-line
+    (define-key map (kbd "M-b") 'counsel-switch-buffer) ;Unset the org-mode map of "org-mark-element"
+    (define-key map (kbd "M-<tab>") 'persp-next)
+    (define-key map (kbd "s-<tab>") 'persp-next)
+    (define-key map (kbd "M-`") 'persp-prev)
+    (define-key map (kbd "M-n") 'persp-switch)
+    (define-key map (kbd "C-SPC") 'toggle-input-method)
+    map)
+  "anerenv-global-minor-mode keymap.")
+
+(define-minor-mode anerenv-global-minor-mode
+  "A minor mode for anerenv global keyhmaps."
+  :init-value t
+  :lighter "anerenv")
+
+(anerenv-global-minor-mode 1)
 #+end_src
 
 ** Diminish
 #+begin_src emacs-lisp
-(package-unless-install 'diminish)
-(diminish 'ivy-mode)
-(diminish 'undo-tree-mode)
-(diminish 'visual-line-mode)
-(diminish 'awk-mode)
-(diminish 'which-key-mode)
-(diminish 'mini-modeline-mode)
-(diminish 'eldoc-mode)
+(use-package diminish
+  :config
+    (diminish 'ivy-mode)
+    (diminish 'undo-tree-mode)
+    (diminish 'visual-line-mode)
+    (diminish 'awk-mode)
+    (diminish 'which-key-mode)
+    (diminish 'mini-modeline-mode)
+    (diminish 'eldoc-mode)
+    (diminish 'yas-minor-mode)
+    (diminish 'auto-revert-mode)
+    (diminish 'anerenv-global-minor-mode)
+)
+
 #+end_src
+
